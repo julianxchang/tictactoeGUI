@@ -13,12 +13,11 @@ def connectToHost() -> bool:
             connectionSocket.connect((ip,port))
             return True
         except:
-            valid_input = "YyNn"
-            choice = input("Connection could not be made. Would you like to try again (y/n): ")
-            while(choice not in valid_input):
+            choice = input("Connection could not be made. Would you like to try again (y/n): ").lower()
+            while(choice != 'y' or choice != 'n'):
                 print("Invalid input.")
-                choice = input("Connection could not be made. Would you like to try again (y/n): ")
-            if choice == "n" or choice == "N":
+                choice = input("Connection could not be made. Would you like to try again (y/n): ").lower()
+            if choice == "n":
                 return False
 
 def move() -> tuple:
@@ -48,12 +47,11 @@ def requestNames() -> tuple:
     return player1Name, player2Name
     
 def playAgain() -> bool:
-    valid_choice = "YyNn"
-    choice = input("Would you like to play another game (y/n): ")
-    while(choice not in valid_choice):
+    choice = input("Would you like to play another game (y/n): ").lower()
+    while(choice != "y" or choice != "n"):
         print("Invalid input.")
-        choice = input("Would you like to play another game (y/n): ")
-    if choice == 'y' or choice == 'Y':
+        choice = input("Would you like to play another game (y/n): ").lower()
+    if choice == 'y':
         connectionSocket.send(b'Play Again')
         return True
     else:
