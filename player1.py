@@ -1,5 +1,6 @@
 import socket
 from gameboard import BoardClass
+import time
 
 #Create connection socket
 connectionSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -105,3 +106,4 @@ if __name__ == "__main__":
             player1.updateGamesPlayed()
             cont = runGame()
         player1.printStats()
+        time.sleep(5)
