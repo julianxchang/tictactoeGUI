@@ -1,6 +1,5 @@
 import socket
 from gameboard import BoardClass
-import time
 
 #Create server socket
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -93,4 +92,3 @@ if __name__ == "__main__":
         cont = runGame()
     print(f"{player1Name} chose to end the game.")
     player2.printStats()
-    time.sleep(5)
