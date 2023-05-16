@@ -78,7 +78,7 @@ def runGame() -> None:
         elif(player1.boardIsFull()):
             return playAgain()
         
-        print("Waiting for oppoent to move...")
+        print("Waiting for oppoent to move.")
         player2Move = connectionSocket.recv(1024).decode('ascii')
         player1.updateGameBoard(int(player2Move[0]), int(player2Move[1]))
         print(f'Current Board (Opponent: {player2Name}):')
