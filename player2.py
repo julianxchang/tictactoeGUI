@@ -15,7 +15,7 @@ def createHost() -> tuple:
             break
         except:
             print("Invalid server ip/port. Please try again.")
-    print("Server is set up. Listening for clients.")
+    print(f"Server is set up. Listening for clients on {ip}:{port}.")
     clientSocket, clientAddress = serverSocket.accept()
     return clientSocket, clientAddress
     
@@ -52,7 +52,7 @@ def runGame() -> None:
     print(f'Current Board (Opponent: {player1Name}):')
     player2.printBoard()
     while(True):
-        print("Waiting for opponent to move.")
+        print("Waiting for opponent to move...")
         player1Move = clientSocket.recv(1024).decode('ascii')
         player2.updateGameBoard(int(player1Move[0]), int(player1Move[1]))
         print(f'Current Board (Opponent: {player1Name}):')
@@ -82,6 +82,7 @@ def runGame() -> None:
 if __name__ == "__main__":
     clientSocket, clientAddress = createHost()
     print("Client connected from: ", clientAddress)
+    print("Waiting for player1 username...")
     player1Name, player2Name = requestNames()
     player2 = BoardClass(player2Name, player2Name, 0, 0, 0, 0)
     cont = True
