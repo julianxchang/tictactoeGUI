@@ -14,7 +14,7 @@ def connectToHost() -> bool:
             return True
         except:
             choice = input("Connection could not be made. Would you like to try again (y/n): ").lower()
-            while(choice != 'y' or choice != 'n'):
+            while(choice != 'y' and choice != 'n'):
                 print("Invalid input.")
                 choice = input("Connection could not be made. Would you like to try again (y/n): ").lower()
             if choice == "n":
@@ -48,7 +48,8 @@ def requestNames() -> tuple:
     
 def playAgain() -> bool:
     choice = input("Would you like to play another game (y/n): ").lower()
-    while(choice != "y" or choice != "n"):
+    while(choice != "y" and choice != "n"):
+        print(choice)
         print("Invalid input.")
         choice = input("Would you like to play another game (y/n): ").lower()
     if choice == 'y':
