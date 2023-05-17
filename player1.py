@@ -4,8 +4,24 @@ from gameboard import BoardClass
 #Create connection socket
 connectionSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-#This fucntion will ask user for host information and attempt to connect
+
 def connectToHost() -> bool:
+    """Connects to server through ip/port specified by user
+
+    The function will ask the user to enter the ip and port of the server
+    they want to connect to. If server is found, the client will connect to
+    the server and function will return True. If server is not found, user 
+    will have option to connect through different ip/port or terminate the program.
+
+    Args:
+        None.
+
+    Returns:
+        True: client was able to sucessfully connect to server.
+        False: client was unable to connect to server and user chose
+        to terminate the program.
+    
+    """
     while True:
         try:
             ip = input("Enter host ip address: ")
@@ -20,7 +36,16 @@ def connectToHost() -> bool:
             if choice == "n":
                 return False
 
-def move() -> tuple:
+def move() -> int and int:
+    """Request input from user asking where they want to play their move.
+
+    Args:
+        None.
+
+    Returns:
+        row: row of the board.
+        col: column of the board.
+    """
     possible_moves = "111213212223313233"
     while(True):
         choice = input("Please enter the row and column you want to choose (if you want top left, you would enter \"11\"): ")
@@ -35,7 +60,22 @@ def move() -> tuple:
             print("Space is already taken. Please Try again.")
     return row, col
 
-def requestNames() -> tuple:
+def requestNames() -> str and str:
+    """Request input from user asking for username.
+
+    This function asks the user to enter a username and then sends it
+    to the server. Then, the function will wait for the server to send back
+    their username. Finally, the function will return the user's username and
+    the server's username.
+
+    Args:
+        None.
+
+    Returns:
+        player1Name: user's username
+        player2Name: server's username
+    
+    """
     player1Name = input("Please enter your username: ")
     while(not player1Name.isalnum()):
         print("Please only enter alphanumeric usernames.")
@@ -47,8 +87,23 @@ def requestNames() -> tuple:
     return player1Name, player2Name
     
 def playAgain() -> bool:
+    """Request input from user asking if they want to play again.
+
+    This function asks the user if they want to play the game again.
+    If they respond with "y" the function will send "Play Again" to the 
+    server and return True. If the user enters "n" the function will send
+    "Fun Times" to the server and return False.
+
+    Args:
+        None.
+
+    Returns:
+        True: user want's to play again.
+        False: user chose to end the game.
+    
+    """
     choice = input("Would you like to play another game (y/n): ").lower()
-    while(choice != "y" and choice != "n"):
+    while(choice != 'y' and choice != 'n'):
         print("Invalid input.")
         choice = input("Would you like to play another game (y/n): ").lower()
     if choice == 'y':
@@ -59,6 +114,15 @@ def playAgain() -> bool:
         return False
 
 def runGame() -> None:
+    """Runs the main game.
+
+    Args:
+        None.
+
+    Returns:
+        playAgain(): The function will call playAgain() when a winning
+        move is detected.
+    """
     print(f'Current Board (Opponent: {player2Name}):')
     player1.printBoard()
     while(True):
