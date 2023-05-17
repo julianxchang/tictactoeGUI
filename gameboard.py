@@ -326,13 +326,13 @@ class BoardClass:
             None.
         """
         print()
-        print("Final Stats\n------------")
+        print("Final Stats\n-----------------------")
         print("Player Name:", self.getName())
         print("Last person to make move:", self.getLastMove())
         print("Total Games Played:", self.getGamesPlayed())
         print("Wins:", self.getNumWins())
-        print("Ties: ", self.getNumTies())
-        print("Losses: ", self.getNumLosses())
+        print("Ties:", self.getNumTies())
+        print("Losses:", self.getNumLosses())
 
     def printBoard(self):
         """Prints the current board
