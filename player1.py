@@ -49,7 +49,6 @@ def requestNames() -> tuple:
 def playAgain() -> bool:
     choice = input("Would you like to play another game (y/n): ").lower()
     while(choice != "y" and choice != "n"):
-        print(choice)
         print("Invalid input.")
         choice = input("Would you like to play another game (y/n): ").lower()
     if choice == 'y':
