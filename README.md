@@ -4,5 +4,5 @@
 # If you see the screen below when trying to download the file, click the arrow and press "Keep"
 ![image](https://github.com/julianxchang/tictactoe/assets/25539195/7ad8306e-66dd-434d-a7e5-51e8c46deba4)
 
-# If you see the screen below when trying to the run .exe files, click "More Info" and press "Run anyway"
+# If you see the screen below when trying to the run the .exe files, click "More Info" and press "Run anyway"
 ![image](https://github.com/julianxchang/tictactoe/assets/25539195/a9d9f13a-e227-4d3e-9a60-2af43c496d54)
