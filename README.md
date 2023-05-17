@@ -7,4 +7,4 @@
 # If you see the screen below when trying to the run the .exe files, click "More Info" and press "Run anyway".
 ![image](https://github.com/julianxchang/tictactoe/assets/25539195/50db1ba2-a626-4aef-bc26-547bcff436ff)
 
-# Make sure to run player2.exe first since it's the server.
+# IMPORTANT: Make sure to run player2.exe first since it's the server.
