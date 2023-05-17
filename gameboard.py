@@ -1,4 +1,4 @@
-"""WHY YOU STILL LOOKING AT MY CODE
+"""WHY YOU STILL LOOKING AT MY CODE"""
 
 
 
@@ -97,7 +97,7 @@
 
 
 
-"""
+
 class BoardClass:
     """A class to store and handle information about the current tictactoe board.
 

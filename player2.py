@@ -1,4 +1,4 @@
-"""STOP LOOKING AT MY CODE
+"""STOP LOOKING AT MY CODE"""
 
 
 
@@ -97,7 +97,7 @@
 
 
 
-"""
+
 import socket
 from gameboard import BoardClass
 
