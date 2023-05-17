@@ -392,7 +392,7 @@ class BoardClass:
     
 
     def boardIsFull(self) -> bool:
-        """Checks if the current board is full
+        """Checks if the current board is full.
 
         Loops through the current board and returns False if 
         there is a space found (empty space). If no space is 
@@ -402,8 +402,8 @@ class BoardClass:
             None.
 
         Returns:
-            True: The board is full
-            False: The board is not full
+            True: The board is full.
+            False: The board is not full.
         """
         for row in self.board:
             if row.count(" ") != 0:
@@ -435,7 +435,7 @@ class BoardClass:
         print("Losses:", self.getNumLosses())
 
     def printBoard(self):
-        """Prints the current board
+        """Prints the current board.
 
         Args:
             None.
