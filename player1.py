@@ -136,7 +136,7 @@ def connectToHost() -> bool:
             if choice == "n":
                 return False
 
-def move() -> int and int:
+def move(player1) -> int and int:
     """Request input from user asking where they want to play their move.
 
     Args:
@@ -213,7 +213,7 @@ def playAgain() -> bool:
         connectionSocket.send(b'Fun Times')
         return False
 
-def runGame() -> None:
+def runGame(player1, player1Name, player2Name) -> None:
     """Runs the main game.
 
     Args:
@@ -226,7 +226,7 @@ def runGame() -> None:
     print(f'Current Board (Opponent: {player2Name}):')
     player1.printBoard()
     while(True):
-        row, col = move()
+        row, col = move(player1)
         player1.updateGameBoard(row, col)
         connectionSocket.send((str(row) + str(col)).encode())
         print(f'Current Board (Opponent: {player2Name}):')
@@ -254,9 +254,15 @@ def runGame() -> None:
         elif(player1.boardIsFull()):
             return playAgain()
 
+def runProgram():
+    """Runs the entire program.
 
+    Args:
+        None.
 
-if __name__ == "__main__":
+    Returns:
+        None.
+    """
     startGame = connectToHost()
     if(startGame):
         player1Name, player2Name = requestNames()
@@ -265,6 +271,10 @@ if __name__ == "__main__":
         while(cont):
             player1.resetGameBoard()
             player1.updateGamesPlayed()
-            cont = runGame()
+            cont = runGame(player1, player1Name, player2Name)
         player1.printStats()
         connectionSocket.close()
+
+
+if __name__ == "__main__":
+    runProgram()

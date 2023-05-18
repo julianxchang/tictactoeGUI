@@ -137,7 +137,7 @@ def createHost() -> object and str:
     return clientSocket, clientAddress
     
 
-def move() -> int and int:
+def move(player2) -> int and int:
     """Request input from user asking where they want to play their move.
 
     Args:
@@ -161,7 +161,7 @@ def move() -> int and int:
             print("Space is already taken. Please Try again.")
     return row, col
 
-def requestNames() -> str and str:
+def requestNames(clientSocket) -> str and str:
     """Gets client's username and server's username.
 
     This function will wait for the client to send their username. The server's
@@ -180,7 +180,7 @@ def requestNames() -> str and str:
     clientSocket.send(player2Name.encode())
     return player1Name, player2Name
 
-def playAgain() -> bool:
+def playAgain(clientSocket, player1Name) -> bool:
     """Waits for client response to see if the game should continue.
 
     Args:
@@ -197,7 +197,7 @@ def playAgain() -> bool:
         return True
     return False
 
-def runGame() -> None:
+def runGame(clientSocket, player2, player1Name, player2Name) -> None:
     """Runs the main game.
 
     Args:
@@ -219,11 +219,11 @@ def runGame() -> None:
         
         #Check if move by player1 was winning a move or was the last move
         if(player2.isWinner()):
-            return playAgain()
+            return playAgain(clientSocket, player1Name)
         elif(player2.boardIsFull()):
-            return playAgain()
+            return playAgain(clientSocket, player1Name)
         
-        row, col = move()
+        row, col = move(player2)
         player2.updateGameBoard(row, col)
         clientSocket.send((str(row) + str(col)).encode())
         print(f'Current Board (Opponent: {player1Name}):')
@@ -233,21 +233,32 @@ def runGame() -> None:
 
         #Check if move by player2 was winning a move or was the last move
         if(player2.isWinner()):
-            return playAgain()
+            return playAgain(clientSocket, player1Name)
         elif(player2.boardIsFull()):
-            return playAgain()
+            return playAgain(clientSocket, player1Name)
 
-if __name__ == "__main__":
+def runProgram():
+    """Runs the entire program.
+
+    Args:
+        None.
+
+    Returns:
+        None.
+    """
     clientSocket, clientAddress = createHost()
     print("Client connected from: ", clientAddress)
     print("Waiting for player1 username...")
-    player1Name, player2Name = requestNames()
+    player1Name, player2Name = requestNames(clientSocket)
     player2 = BoardClass(player2Name, player2Name, 0, 0, 0, 0)
     cont = True
     while(cont):
         player2.resetGameBoard()
         player2.updateGamesPlayed()
-        cont = runGame()
+        cont = runGame(clientSocket, player2, player1Name, player2Name)
     print(f"{player1Name} chose to end the game.")
     player2.printStats()
     serverSocket.close()
+
+if __name__ == "__main__":
+    runProgram()
