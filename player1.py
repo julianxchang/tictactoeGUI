@@ -267,3 +267,4 @@ if __name__ == "__main__":
             player1.updateGamesPlayed()
             cont = runGame()
         player1.printStats()
+        connectionSocket.close()

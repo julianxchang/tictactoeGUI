@@ -128,7 +128,7 @@ def createHost() -> object and str:
             ip = input("Input host ip address: ")
             port = int(input("Input host port number: "))
             serverSocket.bind((ip, port))
-            serverSocket.listen(5)
+            serverSocket.listen(1)
             break
         except:
             print("Invalid server ip/port. Please try again.")
@@ -250,3 +250,4 @@ if __name__ == "__main__":
         cont = runGame()
     print(f"{player1Name} chose to end the game.")
     player2.printStats()
+    serverSocket.close()
