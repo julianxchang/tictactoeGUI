@@ -31,8 +31,8 @@ class BoardClass:
         self.setNumWins(num_wins)
         self.setNumTies(num_ties)
         self.setNumLosses(num_losses)
+        self.setTotalGames(total_games)
         self.setBoard(board)
-        self.setGamesPlayed(total_games)
     
     def setName(self, name: str) -> None:
         """Sets the name of the player.
@@ -89,7 +89,7 @@ class BoardClass:
         """
         self.num_losses = num_losses
 
-    def setGamesPlayed(self, total_games: str) -> None:
+    def setTotalGames(self, total_games: str) -> None:
         """Sets the number of games played.
 
         Args:
@@ -167,7 +167,7 @@ class BoardClass:
         """
         return self.num_losses
 
-    def getGamesPlayed(self) -> int:
+    def getTotalGames(self) -> int:
         """Gets the total number of games played.
 
         Args:
@@ -178,7 +178,7 @@ class BoardClass:
         """
         return self.total_games
 
-    def updateGamesPlayed(self) -> None:
+    def updateTotalGames(self) -> None:
         """Updates the number of games played by one.
 
         Args:
@@ -187,7 +187,7 @@ class BoardClass:
         Returns:
             None.
         """
-        self.setGamesPlayed(self.getGamesPlayed() + 1)
+        self.setTotalGames(self.getTotalGames() + 1)
 
     def resetGameBoard(self):
         """Resets the gameboard.
@@ -329,7 +329,7 @@ class BoardClass:
         print("Final Stats\n-----------------------")
         print("Player Name:", self.getName())
         print("Last person to make move:", self.getLastMove())
-        print("Total Games Played:", self.getGamesPlayed())
+        print("Total Games Played:", self.getTotalGames())
         print("Wins:", self.getNumWins())
         print("Ties:", self.getNumTies())
         print("Losses:", self.getNumLosses())

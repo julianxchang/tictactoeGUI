@@ -157,7 +157,7 @@ def runProgram():
     cont = True
     while(cont):
         player2.resetGameBoard()
-        player2.updateGamesPlayed()
+        player2.updateTotalGames()
         cont = runGame(clientSocket, player2, p1_name, p2_name)
     print(f"{p1_name} chose to end the game.")
     player2.printStats()

@@ -172,7 +172,7 @@ def runProgram():
         cont = True
         while(cont):
             player1.resetGameBoard()
-            player1.updateGamesPlayed()
+            player1.updateTotalGames()
             cont = runGame(player1, p1_name, p2_name)
         player1.printStats()
         connectionSocket.close()
