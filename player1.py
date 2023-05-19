@@ -1,103 +1,3 @@
-"""WHY YOU LOOKING AT MY CODE HUH."""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import socket
 from gameboard import BoardClass
 
@@ -172,19 +72,19 @@ def requestNames() -> str and str:
         None.
 
     Returns:
-        player1Name: user's username
-        player2Name: server's username
+        p1_name: user's username
+        p2_name: server's username
     
     """
-    player1Name = input("Please enter your username: ")
-    while(not player1Name.isalnum()):
+    p1_name = input("Please enter your username (only alphanumeric): ")
+    while(not p1_name.isalnum()):
         print("Please only enter alphanumeric usernames.")
-        player1Name = input("Please enter your username: ")
-    player1Name = (player1Name.encode())
-    connectionSocket.send(player1Name)
-    player1Name = player1Name.decode('ascii')
-    player2Name = connectionSocket.recv(1024).decode('ascii')
-    return player1Name, player2Name
+        p1_name = input("Please enter your username: ")
+    p1_name = (p1_name.encode())
+    connectionSocket.send(p1_name)
+    p1_name = p1_name.decode('ascii')
+    p2_name = connectionSocket.recv(1024).decode('ascii')
+    return p1_name, p2_name
     
 def playAgain() -> bool:
     """Request input from user asking if they want to play again.
@@ -213,7 +113,7 @@ def playAgain() -> bool:
         connectionSocket.send(b'Fun Times')
         return False
 
-def runGame(player1, player1Name, player2Name) -> None:
+def runGame(player1, p1_name, p2_name) -> None:
     """Runs the main game.
 
     Args:
@@ -223,32 +123,34 @@ def runGame(player1, player1Name, player2Name) -> None:
         playAgain(): The function will call playAgain() when a winning
         move is detected.
     """
-    print(f'Current Board (Opponent: {player2Name}):')
+    print(f'Current Board (Opponent: {p2_name}):')
     player1.printBoard()
     while(True):
+        # Request input from user and send move to server
         row, col = move(player1)
         player1.updateGameBoard(row, col)
         connectionSocket.send((str(row) + str(col)).encode())
-        print(f'Current Board (Opponent: {player2Name}):')
+        print(f'Current Board (Opponent: {p2_name}):')
         player1.printBoard()
 
-        player1.setLastMove(player1Name)
+        player1.setLastMove(p1_name)
 
-        #Check if move by player1 was winning a move or was the last move
+        # Check if move by player1 was a winning move or was the last possible move
         if(player1.isWinner()):
             return playAgain()
         elif(player1.boardIsFull()):
             return playAgain()
         
+        # Receive move from server
         print("Waiting for oppoent to move...")
         player2Move = connectionSocket.recv(1024).decode('ascii')
         player1.updateGameBoard(int(player2Move[0]), int(player2Move[1]))
-        print(f'Current Board (Opponent: {player2Name}):')
+        print(f'Current Board (Opponent: {p2_name}):')
         player1.printBoard()
 
-        player1.setLastMove(player2Name)
+        player1.setLastMove(p2_name)
 
-        #Check if move by player2 was winning a move or was the last move
+        # Check if move from server was a winning move or was the last possible move
         if(player1.isWinner()):
             return playAgain()
         elif(player1.boardIsFull()):
@@ -263,18 +165,17 @@ def runProgram():
     Returns:
         None.
     """
-    startGame = connectToHost()
-    if(startGame):
-        player1Name, player2Name = requestNames()
-        player1 = BoardClass(player1Name, player2Name, 0, 0, 0, 0)
+    startgame = connectToHost()
+    if(startgame):
+        p1_name, p2_name = requestNames()
+        player1 = BoardClass(p1_name, p2_name, 0, 0, 0, 0)
         cont = True
         while(cont):
             player1.resetGameBoard()
             player1.updateGamesPlayed()
-            cont = runGame(player1, player1Name, player2Name)
+            cont = runGame(player1, p1_name, p2_name)
         player1.printStats()
         connectionSocket.close()
-
 
 if __name__ == "__main__":
     runProgram()
