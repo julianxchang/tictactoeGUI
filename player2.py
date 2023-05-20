@@ -2,7 +2,7 @@ import socket
 from gameboard import BoardClass
 
 #This function asks user for host information and creates the server
-def createHost() -> object and str:
+def createHost() -> tuple[socket.socket, tuple[str, str], socket.socket]:
     """Creates a server on the ip/port spcified by the user.
 
     The function will ask the user to enter the ip and port of the server
@@ -37,7 +37,7 @@ def createHost() -> object and str:
     return clientSocket, clientAddress, serverSocket
     
 
-def move(player2) -> tuple[int]:
+def move(player2) -> tuple[int, int]:
     """Request input from user asking where they want to play their move.
 
     Args:
@@ -61,7 +61,7 @@ def move(player2) -> tuple[int]:
             print("Space is already taken. Please Try again.")
     return row, col
 
-def requestNames(clientSocket) -> tuple[str]:
+def requestNames(clientSocket) -> tuple[str, str]:
     """Gets client's username and server's username.
 
     This function will wait for the client to send their username. The server's
@@ -96,7 +96,7 @@ def playAgain(clientSocket, p1_name) -> bool:
         return True
     return False
 
-def runGame(player2, p1_name, p2_name, clientSocket) -> None:
+def runGame(player2, p1_name, p2_name, clientSocket) -> bool:
     """Runs the main game.
 
     Args:
@@ -107,7 +107,8 @@ def runGame(player2, p1_name, p2_name, clientSocket) -> None:
 
     Returns:
         playAgain(): The function will call playAgain() when a winning
-        move is detected.
+        move is detected and playAgain() will return True or False depending
+        on if player1 wants to play again.
     """
     print(f'Current Board (Opponent: {p1_name}):')
     player2.printBoard()

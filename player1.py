@@ -1,7 +1,7 @@
 import socket
 from gameboard import BoardClass
 
-def connect_to_host() -> tuple[bool, object]:
+def connect_to_host() -> tuple[bool, socket.socket]:
     """Connects to server through ip/port specified by user
 
     The function will ask the user to enter the ip and port of the server
@@ -112,7 +112,7 @@ def playAgain(connectionSocket) -> bool:
         connectionSocket.send(b'Fun Times')
         return False
 
-def runGame(player1, p1_name, p2_name, connectionSocket) -> None:
+def runGame(player1, p1_name, p2_name, connectionSocket) -> bool:
     """Runs the main game.
 
     Args:
@@ -123,7 +123,8 @@ def runGame(player1, p1_name, p2_name, connectionSocket) -> None:
 
     Returns:
         playAgain(): The function will call playAgain() when a winning
-        move is detected.
+        move is detected and playAgain() will return True or False depending
+        on if the user wants to play again.
     """
     print(f'Current Board (Opponent: {p2_name}):')
     player1.printBoard()
