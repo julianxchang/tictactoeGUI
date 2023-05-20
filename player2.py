@@ -18,7 +18,7 @@ def createHost() -> object and str:
         clientSocket: clientSocket object that can then be used to send/recieve 
         data to/from the client.
         clientAddress: information on the client (ip/port).
-    
+        serverSocket: socket object that can be used by other functions.
     """
     #Create server socket object
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,11 +37,11 @@ def createHost() -> object and str:
     return clientSocket, clientAddress, serverSocket
     
 
-def move(player2) -> int and int:
+def move(player2) -> tuple[int]:
     """Request input from user asking where they want to play their move.
 
     Args:
-        None.
+        player2 (BoardClass object): BoardClass object used to get information about the board.
 
     Returns:
         row: row of the board.
@@ -61,14 +61,14 @@ def move(player2) -> int and int:
             print("Space is already taken. Please Try again.")
     return row, col
 
-def requestNames(clientSocket) -> str and str:
+def requestNames(clientSocket) -> tuple[str]:
     """Gets client's username and server's username.
 
     This function will wait for the client to send their username. The server's
     username is automatically "player2" and the username will be sent to the client.
 
     Args:
-        None.
+        clientSocket (Socket object): socket object used to send and receive messages.
 
     Returns:
         p1_name: client's username.
@@ -84,12 +84,11 @@ def playAgain(clientSocket, p1_name) -> bool:
     """Waits for client response to see if the game should continue.
 
     Args:
-        None.
+        clientSocket (Socket object): socket object used to send and receive messages.
 
     Returns:
         True: client want's to play again.
         False: client chose to end the game.
-    
     """
     print(f"{p1_name} is choosing if they want to play again...")
     player1Choice = clientSocket.recv(1024).decode('ascii')
@@ -97,11 +96,14 @@ def playAgain(clientSocket, p1_name) -> bool:
         return True
     return False
 
-def runGame(clientSocket, player2, p1_name, p2_name) -> None:
+def runGame(player2, p1_name, p2_name, clientSocket) -> None:
     """Runs the main game.
 
     Args:
-        None.
+        player2 (BoardClass object): BoardClass object used to get information about the board.
+        p1_name (str): player1 username.
+        p2_name (str): player2 username.
+        clientSocket (Socket object): socket object used to send and receive messages.
 
     Returns:
         playAgain(): The function will call playAgain() when a winning
@@ -140,7 +142,7 @@ def runGame(clientSocket, player2, p1_name, p2_name) -> None:
         elif(player2.boardIsFull()):
             return playAgain(clientSocket, p1_name)
 
-def runProgram():
+def runProgram() -> None:
     """Runs the entire program.
 
     Args:
@@ -158,7 +160,7 @@ def runProgram():
     while(cont):
         player2.resetGameBoard()
         player2.updateTotalGames()
-        cont = runGame(clientSocket, player2, p1_name, p2_name)
+        cont = runGame(player2, p1_name, p2_name, clientSocket)
     print(f"{p1_name} chose to end the game.")
     player2.printStats()
     serverSocket.close()

@@ -1,7 +1,7 @@
 import socket
 from gameboard import BoardClass
 
-def connect_to_host() -> bool:
+def connect_to_host() -> tuple[bool, object]:
     """Connects to server through ip/port specified by user
 
     The function will ask the user to enter the ip and port of the server
@@ -16,6 +16,7 @@ def connect_to_host() -> bool:
         True: client was able to sucessfully connect to server.
         False: client was unable to connect to server and user chose
         to terminate the program.
+        connectionSocket: Socket object that can be used by other functions.
     
     """
     #Create connection socket object
@@ -35,11 +36,11 @@ def connect_to_host() -> bool:
             if choice == "n":
                 return False, connectionSocket
 
-def move(player1) -> int and int:
+def move(player1) -> tuple[int, int]:
     """Request input from user asking where they want to play their move.
 
     Args:
-        None.
+        player1 (BoardClass object): BoardClass object used to get information about the board.
 
     Returns:
         row: row of the board.
@@ -59,7 +60,7 @@ def move(player1) -> int and int:
             print("Space is already taken. Please Try again.")
     return row, col
 
-def requestNames(connectionSocket) -> str and str:
+def requestNames(connectionSocket) -> tuple[str, str]:
     """Request input from user asking for username.
 
     This function asks the user to enter a username and then sends it
@@ -68,12 +69,11 @@ def requestNames(connectionSocket) -> str and str:
     the server's username.
 
     Args:
-        None.
+        connectionSocket (Socket object): socket object used to send and receive messages.
 
     Returns:
         p1_name: user's username.
         p2_name: server's username.
-    
     """
     p1_name = input("Please enter your username (only alphanumeric): ")
     while(not p1_name.isalnum()):
@@ -94,7 +94,7 @@ def playAgain(connectionSocket) -> bool:
     "Fun Times" to the server and return False.
 
     Args:
-        None.
+        connectionSocket (Socket object): socket object used to send and receive messages.
 
     Returns:
         True: user want's to play again.
@@ -116,10 +116,13 @@ def runGame(player1, p1_name, p2_name, connectionSocket) -> None:
     """Runs the main game.
 
     Args:
-        None.
+        player1 (BoardClass object): BoardClass object used to get information about the board.
+        p1_name (str): player1 username.
+        p2_name (str): player2 username.
+        connectionSocket (Socket object): socket object used to send and receive messages.
 
     Returns:
-        play_again(): The function will call play_again() when a winning
+        playAgain(): The function will call playAgain() when a winning
         move is detected.
     """
     print(f'Current Board (Opponent: {p2_name}):')
@@ -155,7 +158,7 @@ def runGame(player1, p1_name, p2_name, connectionSocket) -> None:
         elif(player1.boardIsFull()):
             return playAgain(connectionSocket)
 
-def runProgram():
+def runProgram() -> None:
     """Runs the entire program.
 
     Args:
