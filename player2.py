@@ -1,9 +1,6 @@
 import socket
 from gameboard import BoardClass
 
-#Create server socket
-serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 #This function asks user for host information and creates the server
 def createHost() -> object and str:
     """Creates a server on the ip/port spcified by the user.
@@ -23,6 +20,9 @@ def createHost() -> object and str:
         clientAddress: information on the client (ip/port)
     
     """
+    #Create server socket object
+    serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
     while(True):
         try:
             ip = input("Input host ip address: ")
@@ -34,7 +34,7 @@ def createHost() -> object and str:
             print("Invalid server ip/port. Please try again.")
     print(f"Server is set up. Listening for clients on {ip}:{port}.")
     clientSocket, clientAddress = serverSocket.accept()
-    return clientSocket, clientAddress
+    return clientSocket, clientAddress, serverSocket
     
 
 def move(player2) -> int and int:
@@ -149,7 +149,7 @@ def runProgram():
     Returns:
         None.
     """
-    clientSocket, clientAddress = createHost()
+    clientSocket, clientAddress, serverSocket = createHost()
     print("Client connected from: ", clientAddress)
     print("Waiting for player1 username...")
     p1_name, p2_name = requestNames(clientSocket)
