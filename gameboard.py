@@ -194,7 +194,7 @@ class BoardClass:
 
         Using the setBoard() function, this function will
         set the board to the default state. This function
-        also sets the attribute last_move to "player2"
+        also sets the attribute last_move to "player2".
 
         Args:
             None.
@@ -225,7 +225,7 @@ class BoardClass:
 
         If the attribute last_move equals "player2", the corresponding
         row and column of the board will equal "X". Otherwise, it would
-        be "O" 
+        be "O".
 
         Args:
             row: row of the board.

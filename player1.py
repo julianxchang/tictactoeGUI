@@ -71,8 +71,8 @@ def requestNames(connectionSocket) -> str and str:
         None.
 
     Returns:
-        p1_name: user's username
-        p2_name: server's username
+        p1_name: user's username.
+        p2_name: server's username.
     
     """
     p1_name = input("Please enter your username (only alphanumeric): ")

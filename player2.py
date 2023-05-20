@@ -17,7 +17,7 @@ def createHost() -> object and str:
     Returns:
         clientSocket: clientSocket object that can then be used to send/recieve 
         data to/from the client.
-        clientAddress: information on the client (ip/port)
+        clientAddress: information on the client (ip/port).
     
     """
     #Create server socket object
@@ -71,8 +71,8 @@ def requestNames(clientSocket) -> str and str:
         None.
 
     Returns:
-        p1_name: client's username
-        p2_name: server's username
+        p1_name: client's username.
+        p2_name: server's username.
     
     """
     p1_name = clientSocket.recv(1024).decode('ascii')
