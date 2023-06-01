@@ -1,6 +1,5 @@
 import socket
 from gameboard import BoardClass
-from tictactoeGUI import tictactoeGUI
 
 def connect_to_host(gui, ip, port):
     #Create connection socket object
@@ -21,6 +20,14 @@ def requestNames(connectionSocket, p1Name) -> tuple[str, str]:
 
 def moveClient(connectionSocket, board, row, col) -> tuple[int, int]:
         connectionSocket.send((str(row) + str(col)).encode())
+        board.updateGameBoard(row, col)
+
+def awaitServerMove(connectionSocket, board):
+    p2Move = connectionSocket.recv(1024).decode('ascii')
+    row, col = int(p2Move[0]), int(p2Move[1])
+    board.updateGameBoard(row, col)
+    return row, col
+
 
 def playAgain(connectionSocket) -> bool:
     choice = input("Would you like to play another game (y/n): ").lower()
@@ -65,21 +72,6 @@ def runGame(player1, p1_name, p2_name, connectionSocket) -> bool:
             return playAgain(connectionSocket)
         elif(player1.boardIsFull()):
             return playAgain(connectionSocket)
-
-def runProgram() -> None:
-    tictactoeGUI("Client")
-    '''
-    startgame, connectionSocket = gui.getStartGame(), 90
-    if(startgame):
-        p1_name, p2_name = requestNames(connectionSocket)
-        player1 = BoardClass(p1_name, p2_name, 0, 0, 0, 0)
-        cont = True
-        while(cont):
-            player1.resetGameBoard()
-            player1.updateTotalGames()
-            cont = runGame(player1, p1_name, p2_name, connectionSocket)
-        player1.printStats()
-    connectionSocket.close()
-    '''
+        
 if __name__ == "__main__":
-    runProgram()
+    pass

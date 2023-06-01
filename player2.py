@@ -1,6 +1,5 @@
 import socket
 from gameboard import BoardClass
-from tictactoeGUI import tictactoeGUI
 
 #This function asks user for host information and creates the server
 def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.socket]:
@@ -22,24 +21,18 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
         gui.showErrorServerScreen()
 
 def requestNames(gui, clientSocket) -> tuple[str, str]:
-    print("waiting for p1 username")
     p1Name = clientSocket.recv(1024).decode('ascii')
     gui.p1Name.set(p1Name)
 
-def moveServer(player2) -> tuple[int, int]:
-    possible_moves = "111213212223313233"
-    while(True):
-        choice = input("Please enter the row and column you want to choose (if you want top left, you would enter \"11\"): ")
-        while(choice not in possible_moves or len(choice) != 2):
-            print("Not a valid row/column.")
-            choice = input("Please enter the row and column you want to choose (if you want top left, you would enter \"11\"): ")
-        row = int(choice[0])-1
-        col = int(choice[1])-1
-        if(player2.isEmpty(row, col)):
-            break
-        else:
-            print("Space is already taken. Please Try again.")
+def awaitClientMove(clientSocket, board):
+    p1Move = clientSocket.recv(1024).decode('ascii')
+    row, col = int(p1Move[0]), int(p1Move[1])
+    board.updateGameBoard(row, col)
     return row, col
+
+def moveServer(clientSocket, board, row, col) -> tuple[int, int]:
+    clientSocket.send((str(row) + str(col)).encode())
+    board.updateGameBoard(row, col)
 
 def playAgain(clientSocket, p1_name) -> bool:
     print(f"{p1_name} is choosing if they want to play again...")
@@ -82,22 +75,6 @@ def runGame(player2, p1_name, p2_name, clientSocket) -> bool:
         elif(player2.boardIsFull()):
             return playAgain(clientSocket, p1_name)
 
-def runProgram() -> None:
-    tictactoeGUI("Server")
-    '''
-    clientSocket, clientAddress, serverSocket = createHost()
-    print("Client connected from: ", clientAddress)
-    print("Waiting for player1 username...")
-    p1_name, p2_name = requestNames(clientSocket)
-    player2 = BoardClass(p2_name, p2_name, 0, 0, 0, 0)
-    cont = True
-    while(cont):
-        player2.resetGameBoard()
-        player2.updateTotalGames()
-        cont = runGame(player2, p1_name, p2_name, clientSocket)
-    print(f"{p1_name} chose to end the game.")
-    player2.printStats()
-    serverSocket.close()
-    '''
+
 if __name__ == "__main__":
-    runProgram()
+    pass
