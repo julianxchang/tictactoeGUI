@@ -331,7 +331,6 @@ class BoardClass:
             if row.count(" ") != 0:
                 return False
         self.setNumTies(self.getNumTies() + 1)
-        print("Tie Game!")
         return True
 
     def computeStats(self) -> None:

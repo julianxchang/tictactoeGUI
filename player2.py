@@ -9,7 +9,7 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
         serverSocket.bind((ip, port))
         gui.waitingText.set(f"Waiting for connection on {gui.connectionIP.get()}:{gui.connectionPort.get()}...")
         gui.hideConnectionScreen()
-        gui.label3.grid_forget()
+        gui.invalidServerLabel.grid_forget()
         gui.showWaitingForClientScreen()
         serverSocket.listen(1)
         clientSocket, clientAddress = serverSocket.accept()
@@ -19,6 +19,7 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
     except:
         gui.reloadConnectionScreen()
         gui.showErrorServerScreen()
+        return False
 
 def requestNames(gui, clientSocket) -> tuple[str, str]:
     p1Name = clientSocket.recv(1024).decode('ascii')
@@ -36,7 +37,7 @@ def move(clientSocket, board, row, col) -> tuple[int, int]:
 
 def playAgain(clientSocket, gui) -> bool:
     p1Choice = clientSocket.recv(1024).decode('ascii')
-    gui.hideEndScreen()
+    gui.hideWaitingForClientScreen()
     if(p1Choice == "Play Again"):
         gui.restartGame()
     else:

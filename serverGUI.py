@@ -12,7 +12,6 @@ class serverGUI():
         self.initTKVariables()
         self.createConnectionScreen()
         self.createWaitingForClientScreen()
-        self.createEndScreen()
         self.createStatScreen()
         self.showConnectionScreen()
         self.runUI()
@@ -40,37 +39,44 @@ class serverGUI():
         self.master.resizable(0,0)
 
     def createConnectionScreen(self):
-        self.label1 = tk.Label(self.master, text="Enter host ip address:")
+        self.serverIpLabel = tk.Label(self.master, text="Enter host ip address:")
         self.connectionIPEntry = tk.Entry(self.master, textvariable=self.connectionIP)
-        self.label2 = tk.Label(self.master, text = "Enter host port number:")
+        self.serverPortLabel = tk.Label(self.master, text = "Enter host port number:")
         self.connectionPortEntry = tk.Entry(self.master, textvariable=self.connectionPort)
-        self.connectionInputButton = tk.Button(self.master, text="Create Server", command=Thread(target=lambda:self.attemptCreateServer(self.connectionIP.get(), self.connectionPort.get())).start)
-        self.label3 = tk.Label(self.master, text="Invalid server ip/port. Please try again", fg="red")
+        self.connectionInputButton = tk.Button(self.master, text="Create Server", command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start)
+        self.invalidServerLabel = tk.Label(self.master, text="Invalid server ip/port. Please try again", fg="red")
 
-    def showConnectionScreen(self):
-        self.label1.grid(row=0,column=0)
-        self.connectionIPEntry.grid(row=0,column=1, padx=55)
-        self.label2.grid(row=1,column=0)
-        self.connectionPortEntry.grid(row=1,column=1, padx=55)
-        self.connectionInputButton.grid(row=2)
-
-    def hideConnectionScreen(self):
-        self.label1.grid_forget()
-        self.connectionIPEntry.grid_forget()
-        self.label2.grid_forget()
-        self.connectionPortEntry.grid_forget()
-        self.connectionInputButton.grid_forget()
-
-    def attemptCreateServer(self, ip, port):
+    def createServer(self, ip, port):
         from player2 import createHost
         self.connectionInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
+        if(self.socket != False):
+            self.startGame()
+
+    def startGame(self):
         self.hideWaitingForClientScreen()
         self.createMainGame()
         self.board = BoardClass(self.p2Name, self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 1)
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.showMainGame()
         self.getClientMove()
+
+    def createWaitingForClientScreen(self):
+        self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText)
+
+    def showConnectionScreen(self):
+        self.serverIpLabel.grid(row=0,column=0)
+        self.connectionIPEntry.grid(row=0,column=1, padx=55)
+        self.serverPortLabel.grid(row=1,column=0)
+        self.connectionPortEntry.grid(row=1,column=1, padx=55)
+        self.connectionInputButton.grid(row=2)
+
+    def hideConnectionScreen(self):
+        self.serverIpLabel.grid_forget()
+        self.connectionIPEntry.grid_forget()
+        self.serverPortLabel.grid_forget()
+        self.connectionPortEntry.grid_forget()
+        self.connectionInputButton.grid_forget()
 
     def getClientMove(self):
         from player2 import awaitClientMove
@@ -98,9 +104,6 @@ class serverGUI():
         self.enableButtons()
         self.checkEndGame(False)
 
-    def createWaitingForClientScreen(self):
-        self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText)
-
     def showWaitingForClientScreen(self):
         self.waitingForClientLabel.grid()
 
@@ -108,10 +111,10 @@ class serverGUI():
         self.waitingForClientLabel.grid_forget()
 
     def showErrorServerScreen(self):
-        self.label3.grid(row=2,column=1)
+        self.invalidServerLabel.grid(row=2,column=1)
 
     def reloadConnectionScreen(self):
-        self.label3.grid_forget()
+        self.invalidServerLabel.grid_forget()
         self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()
@@ -217,29 +220,20 @@ class serverGUI():
         if(self.btn9['text'] == ' '):
             self.btn9['state'] = 'normal'
 
-    def createEndScreen(self):
-        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
-
-    def showEndScreen(self):
-        self.endLabel.grid(row=0, column=0)
-
-    def hideEndScreen(self):
-        self.endLabel.grid_forget()
-
     def checkEndGame(self, getNextMove):
         from player2 import playAgain
         if(self.board.isWinner()):
             self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
-                self.endLabelText.set(f"You won! {self.p1Name.get()} is choosing if they want to play again...")
+                self.waitingText.set(f"You won! {self.p1Name.get()} is choosing if they want to play again...")
             else:
-                self.endLabelText.set(f"You lost! {self.p1Name.get()} is choosing if they want to play again...")
-            self.showEndScreen()
+                self.waitingText.set(f"You lost! {self.p1Name.get()} is choosing if they want to play again...")
+            self.showWaitingForClientScreen()
             playAgain(self.socket, self)
         elif(self.board.boardIsFull()):
             self.hideMainGame()
-            self.endLabelText.set(f"Tie game! {self.p1Name.get()} is choosing if they want to play again...")
-            self.showEndScreen()
+            self.waitingText.set(f"Tie game! {self.p1Name.get()} is choosing if they want to play again...")
+            self.showWaitingForClientScreen()
             playAgain(self.socket, self)
         else:
             if(getNextMove == True):
