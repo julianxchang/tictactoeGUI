@@ -18,7 +18,7 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
         return clientSocket
     except:
         gui.reloadConnectionScreen()
-        gui.showErrorServerScreen()
+        gui.invalidServerLabel.grid(row=2,column=1)
         return False
 
 def requestNames(gui, clientSocket) -> tuple[str, str]:
