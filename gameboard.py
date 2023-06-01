@@ -10,10 +10,10 @@ class BoardClass:
         total_games (int): The total number of games played.
         board (list): The current board.
     """
-    
+
     def __init__(self, name: str = "", last_move: str = "", num_wins: int = 0, num_ties: int = 0, num_losses: int = 0, total_games: int = 0, board: list = [[" "," "," "],[" "," "," "],[" "," "," "]]):
         """Creates a BoardClass with all the information of the board.
-        
+
         Args:
             name: The name of the player.
             last_move: The name of player who last moved.
@@ -33,10 +33,10 @@ class BoardClass:
         self.setNumLosses(num_losses)
         self.setTotalGames(total_games)
         self.setBoard(board)
-    
+
     def setName(self, name: str) -> None:
         """Sets the name of the player.
-        
+
         Args:
             name: Name of the player.
 
@@ -47,10 +47,10 @@ class BoardClass:
 
     def setLastMove(self, last_move: str) -> None:
         """Sets the name of the player who last moved.
-        
+
         Args:
             last_move: The name of player who last moved.
-        
+
         Returns:
             None.
         """
@@ -58,7 +58,7 @@ class BoardClass:
 
     def setNumWins(self, num_wins: str) -> None:
         """Sets the number of wins.
-        
+
         Args:
             num_wins: The total number of wins.
 
@@ -69,7 +69,7 @@ class BoardClass:
 
     def setNumTies(self, num_ties: str) -> None:
         """Sets the number of ties.
-        
+
         Args:
             num_ties: The total number of ties.
 
@@ -80,7 +80,7 @@ class BoardClass:
 
     def setNumLosses(self, num_losses: str) -> None:
         """Sets the number of wins.
-        
+
         Args:
             num_losses: The total number of losses.
 
@@ -122,7 +122,7 @@ class BoardClass:
 
         """
         return self.name
-    
+
     def getLastMove(self) -> str:
         """Gets the name of the player who last moved.
 
@@ -133,7 +133,7 @@ class BoardClass:
             A copy of the attribute last_move.
         """
         return self.last_move
-    
+
     def getNumWins(self) -> int:
         """Gets the total number of wins.
 
@@ -144,7 +144,7 @@ class BoardClass:
             A copy of the attribute num_wins.
         """
         return self.num_wins
-    
+
     def getNumTies(self) -> int:
         """Gets the total number of ties.
 
@@ -155,7 +155,7 @@ class BoardClass:
             A copy of the attribute num_ties.
         """
         return self.num_ties
-    
+
     def getNumLosses(self) -> int:
         """Gets the total number of losses.
 
@@ -238,7 +238,7 @@ class BoardClass:
             self.board[row][col] = "X"
         else:
             self.board[row][col] = "O"
-    
+
     def isWinner(self):
         """Checks if the current board contains a winning move.
 
@@ -276,7 +276,7 @@ class BoardClass:
                 win = True
             if(self.board[0][2] == token and self.board[1][1] == token and self.board[2][0] == token):
                 win = True
-        
+
         #Check if win detected
         if win == True:
             if self.getName() == self.getLastMove():
@@ -289,13 +289,12 @@ class BoardClass:
                 return True
         return False
 
-    
 
     def boardIsFull(self) -> bool:
         """Checks if the current board is full.
 
-        Loops through the current board and returns False if 
-        there is a space found (empty space). If no space is 
+        Loops through the current board and returns False if
+        there is a space found (empty space). If no space is
         found, the attribute num_ties will be incremented by 1.
 
         Args:
@@ -315,8 +314,8 @@ class BoardClass:
     def printStats(self):
         """Prints the stats.
 
-        This function will print the players name, last person 
-        to make a move, total games played, and number of wins, 
+        This function will print the players name, last person
+        to make a move, total games played, and number of wins,
         ties, and losses.
 
         Args:

@@ -1,52 +1,32 @@
 import socket
 from gameboard import BoardClass
+from tictactoeGUI import tictactoeGUI
 
 #This function asks user for host information and creates the server
-def createHost() -> tuple[socket.socket, tuple[str, str], socket.socket]:
-    """Creates a server on the ip/port spcified by the user.
-
-    The function will ask the user to enter the ip and port of the server
-    they want to set up. If server is valid, the function will create the server and
-    begin listening for clients. The server will return a clientSocket object and 
-    clientAddress string when a client successfully connects. If server is not valid,
-    the function continuously ask the user until a valid server ip/port is entered.
-
-    Args:
-        None.
-
-    Returns:
-        clientSocket: clientSocket object that can then be used to send/recieve 
-        data to/from the client.
-        clientAddress: information on the client (ip/port).
-        serverSocket: socket object that can be used by other functions.
-    """
+def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.socket]:
     #Create server socket object
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        serverSocket.bind((ip, port))
+        gui.waitingText.set(f"Waiting for connection on {gui.connectionIP.get()}:{gui.connectionPort.get()}...")
+        gui.destroyConnectionScreen()
+        gui.label3.destroy()
+        gui.showWaitingForClientScreen()
+        serverSocket.listen(1)
+        clientSocket, clientAddress = serverSocket.accept()
+        gui.waitingText.set("Player 1 connected! Waiting for them to input username...")
+        requestNames(gui, clientSocket)
+        return clientSocket
+    except:
+        gui.reloadConnectionScreen()
+        gui.showErrorServerScreen()
 
-    while(True):
-        try:
-            ip = input("Input host ip address: ")
-            port = int(input("Input host port number: "))
-            serverSocket.bind((ip, port))
-            serverSocket.listen(1)
-            break
-        except:
-            print("Invalid server ip/port. Please try again.")
-    print(f"Server is set up. Listening for clients on {ip}:{port}.")
-    clientSocket, clientAddress = serverSocket.accept()
-    return clientSocket, clientAddress, serverSocket
-    
+def requestNames(gui, clientSocket) -> tuple[str, str]:
+    print("waiting for p1 username")
+    p1Name = clientSocket.recv(1024).decode('ascii')
+    gui.p1Name.set(p1Name)
 
-def move(player2) -> tuple[int, int]:
-    """Request input from user asking where they want to play their move.
-
-    Args:
-        player2 (BoardClass object): BoardClass object used to get information about the board.
-
-    Returns:
-        row: row of the board.
-        col: column of the board.
-    """
+def moveServer(player2) -> tuple[int, int]:
     possible_moves = "111213212223313233"
     while(True):
         choice = input("Please enter the row and column you want to choose (if you want top left, you would enter \"11\"): ")
@@ -61,35 +41,7 @@ def move(player2) -> tuple[int, int]:
             print("Space is already taken. Please Try again.")
     return row, col
 
-def requestNames(clientSocket) -> tuple[str, str]:
-    """Gets client's username and server's username.
-
-    This function will wait for the client to send their username. The server's
-    username is automatically "player2" and the username will be sent to the client.
-
-    Args:
-        clientSocket (Socket object): socket object used to send and receive messages.
-
-    Returns:
-        p1_name: client's username.
-        p2_name: server's username.
-    
-    """
-    p1_name = clientSocket.recv(1024).decode('ascii')
-    p2_name = "player2"
-    clientSocket.send(p2_name.encode())
-    return p1_name, p2_name
-
 def playAgain(clientSocket, p1_name) -> bool:
-    """Waits for client response to see if the game should continue.
-
-    Args:
-        clientSocket (Socket object): socket object used to send and receive messages.
-
-    Returns:
-        True: client want's to play again.
-        False: client chose to end the game.
-    """
     print(f"{p1_name} is choosing if they want to play again...")
     player1Choice = clientSocket.recv(1024).decode('ascii')
     if(player1Choice == "Play Again"):
@@ -97,19 +49,6 @@ def playAgain(clientSocket, p1_name) -> bool:
     return False
 
 def runGame(player2, p1_name, p2_name, clientSocket) -> bool:
-    """Runs the main game.
-
-    Args:
-        player2 (BoardClass object): BoardClass object used to get information about the board.
-        p1_name (str): player1 username.
-        p2_name (str): player2 username.
-        clientSocket (Socket object): socket object used to send and receive messages.
-
-    Returns:
-        playAgain(): The function will call playAgain() when a winning
-        move is detected and playAgain() will return True or False depending
-        on if player1 wants to play again.
-    """
     print(f'Current Board (Opponent: {p1_name}):')
     player2.printBoard()
     while(True):
@@ -121,13 +60,13 @@ def runGame(player2, p1_name, p2_name, clientSocket) -> bool:
         player2.printBoard()
 
         player2.setLastMove(p1_name)
-        
+
         #Check if move from client was winning a move or was the last possible move
         if(player2.isWinner()):
             return playAgain(clientSocket, p1_name)
         elif(player2.boardIsFull()):
             return playAgain(clientSocket, p1_name)
-        
+
         # Request input from user and send move to server
         row, col = move(player2)
         player2.updateGameBoard(row, col)
@@ -144,14 +83,8 @@ def runGame(player2, p1_name, p2_name, clientSocket) -> bool:
             return playAgain(clientSocket, p1_name)
 
 def runProgram() -> None:
-    """Runs the entire program.
-
-    Args:
-        None.
-
-    Returns:
-        None.
-    """
+    tictactoeGUI("Server")
+    '''
     clientSocket, clientAddress, serverSocket = createHost()
     print("Client connected from: ", clientAddress)
     print("Waiting for player1 username...")
@@ -165,6 +98,6 @@ def runProgram() -> None:
     print(f"{p1_name} chose to end the game.")
     player2.printStats()
     serverSocket.close()
-
+    '''
 if __name__ == "__main__":
     runProgram()
