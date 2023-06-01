@@ -12,6 +12,7 @@ class clientServer():
         self.initTKVariables()
         self.createConnectionScreen()
         self.createRequestNameScreen()
+        self.createEndScreen()
         self.showConnectionScreen()
         self.runUI()
 
@@ -22,6 +23,7 @@ class clientServer():
         self.connectionPort.set(8000)
         self.p1Name = tk.StringVar()
         self.currentTurn = tk.StringVar()
+        self.endLabelText = tk.StringVar()
 
     def canvasSetup(self):
         self.master = tk.Tk()
@@ -88,7 +90,7 @@ class clientServer():
             requestNames(self.socket, p1Name)
             self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
             self.destroyRequestNameScreen()
-            self.board = BoardClass(self.p1Name.get(), self.p2Name, 0, 0, 0, 0)
+            self.board = BoardClass(self.p1Name.get(), self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 0)
             self.createMainGame()
             self.showMainGame()
         except:
@@ -135,8 +137,7 @@ class clientServer():
         self.btn9.destroy()
 
     def btnClick(self, btn):
-        print(f"Clicked button {btn['text']}")
-        from player1 import moveClient
+        from player1 import move
         self.disableAllButtons()
         btn["text"] = "X"
         if(btn == self.btn1):
@@ -157,14 +158,15 @@ class clientServer():
             row, col = 2, 1
         elif(btn == self.btn9):
             row, col = 2, 2
-        moveClient(self.socket, self.board, row, col)
+        move(self.socket, self.board, row, col)
         self.board.setLastMove(self.p1Name.get())
+        self.currentTurn.set(f'Current Turn: {self.p2Name}')
+        self.checkEndGame()
         self.getServerMove()
 
     def getServerMove(self):
         from player1 import awaitServerMove
         row, col = awaitServerMove(self.socket, self.board)
-        print(f'recieved move {row} {col}')
         if(row==0 and col == 0):
             self.btn1["text"] = "O"
         elif(row==0 and col == 1):
@@ -184,7 +186,9 @@ class clientServer():
         elif(row==2 and col == 2):
             self.btn9["text"] = "O"
         self.board.setLastMove(self.p2Name)
+        self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.enableButtons()
+        self.checkEndGame()
 
 
     def disableAllButtons(self):
@@ -197,7 +201,6 @@ class clientServer():
         self.btn7['state'] = 'disabled'
         self.btn8['state'] = 'disabled'
         self.btn9['state'] = 'disabled'
-
 
     def enableButtons(self):
         if(self.btn1['text'] == ' '):
@@ -219,35 +222,59 @@ class clientServer():
         if(self.btn9['text'] == ' '):
             self.btn9['state'] = 'normal'
 
-
     def showMainGame(self):
         self.playerLabel.grid(row=0, column=0)
         self.currentTurnLabel.grid(row=0, column=1)
         self.opponentLabel.grid(row=0, column=2)
-        self.btn1.grid(row=1,column=0, padx=5, pady=5)
-        self.btn2.grid(row=1,column=1, padx=5, pady=5)
-        self.btn3.grid(row=1,column=2, padx=5, pady=5)
-        self.btn4.grid(row=2,column=0, padx=5, pady=5)
-        self.btn5.grid(row=2,column=1, padx=5, pady=5)
-        self.btn6.grid(row=2,column=2, padx=5, pady=5)
-        self.btn7.grid(row=3,column=0, padx=5, pady=5)
-        self.btn8.grid(row=3,column=1, padx=5, pady=5)
-        self.btn9.grid(row=3,column=2, padx=5, pady=5)
+        self.btn1.grid(row=1, column=0, padx=5, pady=5)
+        self.btn2.grid(row=1, column=1, padx=5, pady=5)
+        self.btn3.grid(row=1, column=2, padx=5, pady=5)
+        self.btn4.grid(row=2, column=0, padx=5, pady=5)
+        self.btn5.grid(row=2, column=1, padx=5, pady=5)
+        self.btn6.grid(row=2, column=2, padx=5, pady=5)
+        self.btn7.grid(row=3, column=0, padx=5, pady=5)
+        self.btn8.grid(row=3, column=1, padx=5, pady=5)
+        self.btn9.grid(row=3, column=2, padx=5, pady=5)
 
-    def createTieScreen(self):
-        self.tieLabel = tk.Label(self.master, text="Tie Game! Would you like to play again?")
-        self.continueButton(self.master, text="Yes", command = lambda:self.restartGame())
-        self.stopButton(self.master, text="No", command = Thread().start)
+    def createEndScreen(self):
+        from player1 import playAgain, endGame
+        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
+        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:playAgain(self.socket, self))
+        self.stopButton = tk.Button(self.master, text="No", command=lambda:endGame(self.socket, self))
 
-    def showTieScreen(self):
-        self.tieLabel.grid(row=0,column=0)
-        self.continueButton.grid(row=0,column=1)
-        self.stopButton.grid(row=0,column=2)
+    def showEndScreen(self):
+        self.endLabel.grid(row=0, column=0)
+        self.continueButton.grid(row=0, column=1)
+        self.stopButton.grid(row=0, column=2)
+
+    def destroyEndScreen(self):
+        self.endLabel.destroy()
+        self.continueButton.destroy()
+        self.stopButton.destroy()
+
+    def checkEndGame(self):
+        if(self.board.isWinner()):
+            self.destroyMainGame()
+            if(self.board.getThisName() == self.board.getLastMove()):
+                self.endLabelText.set("You won! Play again?")
+            else:
+                self.endLabelText.set("You lost! Play again?")
+            self.showEndScreen()
+        if(self.board.boardIsFull()):
+            self.destroyMainGame()
+            self.endLabelText.set("Tie game! Play again?")
+            self.showEndScreen()
 
     def restartGame(self):
-        self.destroyMainGame()
+        self.board.resetGameBoard()
         self.createMainGame()
         self.showMainGame()
+
+    def createStatScreen(self):
+        pass
+
+    def showStatScreen(self):
+        print("hit")
 
     def runUI(self):
         self.master.mainloop()

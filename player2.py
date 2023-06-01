@@ -30,50 +30,18 @@ def awaitClientMove(clientSocket, board):
     board.updateGameBoard(row, col)
     return row, col
 
-def moveServer(clientSocket, board, row, col) -> tuple[int, int]:
+def move(clientSocket, board, row, col) -> tuple[int, int]:
     clientSocket.send((str(row) + str(col)).encode())
     board.updateGameBoard(row, col)
 
-def playAgain(clientSocket, p1_name) -> bool:
-    print(f"{p1_name} is choosing if they want to play again...")
-    player1Choice = clientSocket.recv(1024).decode('ascii')
-    if(player1Choice == "Play Again"):
-        return True
-    return False
-
-def runGame(player2, p1_name, p2_name, clientSocket) -> bool:
-    print(f'Current Board (Opponent: {p1_name}):')
-    player2.printBoard()
-    while(True):
-        # Receive move from client
-        print("Waiting for opponent to move...")
-        player1Move = clientSocket.recv(1024).decode('ascii')
-        player2.updateGameBoard(int(player1Move[0]), int(player1Move[1]))
-        print(f'Current Board (Opponent: {p1_name}):')
-        player2.printBoard()
-
-        player2.setLastMove(p1_name)
-
-        #Check if move from client was winning a move or was the last possible move
-        if(player2.isWinner()):
-            return playAgain(clientSocket, p1_name)
-        elif(player2.boardIsFull()):
-            return playAgain(clientSocket, p1_name)
-
-        # Request input from user and send move to server
-        row, col = move(player2)
-        player2.updateGameBoard(row, col)
-        clientSocket.send((str(row) + str(col)).encode())
-        print(f'Current Board (Opponent: {p1_name}):')
-        player2.printBoard()
-
-        player2.setLastMove(p2_name)
-
-        #Check if move by player2 was a winning move or was the last possible move
-        if(player2.isWinner()):
-            return playAgain(clientSocket, p1_name)
-        elif(player2.boardIsFull()):
-            return playAgain(clientSocket, p1_name)
+def playAgain(clientSocket, gui) -> bool:
+    print("waiting for move")
+    p1Choice = clientSocket.recv(1024).decode('ascii')
+    if(p1Choice == "Play Again"):
+        gui.createMainGame()
+        gui.showMainGame()
+    else:
+        gui.showStatScreen()
 
 
 if __name__ == "__main__":

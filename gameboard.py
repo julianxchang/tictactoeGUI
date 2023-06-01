@@ -11,7 +11,7 @@ class BoardClass:
         board (list): The current board.
     """
 
-    def __init__(self, name: str = "", last_move: str = "", num_wins: int = 0, num_ties: int = 0, num_losses: int = 0, total_games: int = 0, board: list = [[" "," "," "],[" "," "," "],[" "," "," "]]):
+    def __init__(self, thisName: str = "", p1Name: str = "", p2Name: str = "", last_move: str = "", num_wins: int = 0, num_ties: int = 0, num_losses: int = 0, total_games: int = 0, board: list = [[" "," "," "],[" "," "," "],[" "," "," "]]):
         """Creates a BoardClass with all the information of the board.
 
         Args:
@@ -26,7 +26,9 @@ class BoardClass:
         Returns:
             None.
         """
-        self.setName(name)
+        self.setThisName(thisName)
+        self.setP1Name(p1Name)
+        self.setP2Name(p2Name)
         self.setLastMove(last_move)
         self.setNumWins(num_wins)
         self.setNumTies(num_ties)
@@ -34,7 +36,10 @@ class BoardClass:
         self.setTotalGames(total_games)
         self.setBoard(board)
 
-    def setName(self, name: str) -> None:
+    def setThisName(self, thisName: str) -> None:
+        self.thisName = thisName
+
+    def setP1Name(self, name: str) -> None:
         """Sets the name of the player.
 
         Args:
@@ -43,7 +48,18 @@ class BoardClass:
         Returns:
             None.
         """
-        self.name = name
+        self.p1Name = name
+
+    def setP2Name(self, name: str) -> None:
+        """Sets the name of the player.
+
+        Args:
+            name: Name of the player.
+
+        Returns:
+            None.
+        """
+        self.p2Name = name
 
     def setLastMove(self, last_move: str) -> None:
         """Sets the name of the player who last moved.
@@ -111,7 +127,19 @@ class BoardClass:
         """
         self.board = board
 
-    def getName(self) -> str:
+    def getThisName(self) -> str:
+            """Gets the name of the player.
+
+            Args:
+                None.
+
+            Returns:
+                A copy of the attribute name.
+
+            """
+            return self.thisName
+
+    def getP1Name(self) -> str:
         """Gets the name of the player.
 
         Args:
@@ -121,7 +149,19 @@ class BoardClass:
             A copy of the attribute name.
 
         """
-        return self.name
+        return self.p1Name
+
+    def getP2Name(self) -> str:
+        """Gets the name of the player.
+
+        Args:
+            None.
+
+        Returns:
+            A copy of the attribute name.
+
+        """
+        return self.p2Name
 
     def getLastMove(self) -> str:
         """Gets the name of the player who last moved.
@@ -189,7 +229,7 @@ class BoardClass:
         """
         self.setTotalGames(self.getTotalGames() + 1)
 
-    def resetGameBoard(self):
+    def resetGameBoard(self) -> None:
         """Resets the gameboard.
 
         Using the setBoard() function, this function will
@@ -205,22 +245,7 @@ class BoardClass:
         self.setBoard([[" "," "," "],[" "," "," "],[" "," "," "]])
         self.setLastMove("player2")
 
-    def isEmpty(self, row, col):
-        """Checks if a specific space is already taken on the board.
-
-        Args:
-            row: row of the board.
-            col: column of the board.
-
-        Returns:
-            True: specified space is not taken.
-            False: specified space is taken.
-        """
-        if(self.board[row][col] == " "):
-            return True
-        return False
-
-    def updateGameBoard(self, row, col):
+    def updateGameBoard(self, row, col) -> None:
         """Updates the board with the corresponding row/col.
 
         If the attribute last_move equals "player2", the corresponding
@@ -239,7 +264,7 @@ class BoardClass:
         else:
             self.board[row][col] = "O"
 
-    def isWinner(self):
+    def isWinner(self) -> bool:
         """Checks if the current board contains a winning move.
 
         Checks current board twice, each time with token = "X" and token = "O"
@@ -279,7 +304,7 @@ class BoardClass:
 
         #Check if win detected
         if win == True:
-            if self.getName() == self.getLastMove():
+            if self.getThisName() == self.getLastMove():
                 self.setNumWins(self.getNumWins() + 1)
                 print("You Won!")
                 return True
@@ -311,7 +336,7 @@ class BoardClass:
         print("Tie Game!")
         return True
 
-    def printStats(self):
+    def computeStats(self) -> None:
         """Prints the stats.
 
         This function will print the players name, last person
@@ -324,16 +349,14 @@ class BoardClass:
         Returns:
             None.
         """
-        print()
-        print("Final Stats\n-----------------------")
-        print("Player Name:", self.getName())
+        return 
         print("Last person to make move:", self.getLastMove())
         print("Total Games Played:", self.getTotalGames())
         print("Wins:", self.getNumWins())
         print("Ties:", self.getNumTies())
         print("Losses:", self.getNumLosses())
 
-    def printBoard(self):
+    def printBoard(self) -> None:
         """Prints the current board.
 
         Args:

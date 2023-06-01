@@ -12,6 +12,8 @@ class serverGUI():
         self.initTKVariables()
         self.createConnectionScreen()
         self.createWaitingForClientScreen()
+        self.createEndScreen()
+        self.createStatScreen()
         self.showConnectionScreen()
         self.runUI()
 
@@ -23,6 +25,7 @@ class serverGUI():
         self.p1Name = tk.StringVar()
         self.waitingText = tk.StringVar()
         self.currentTurn = tk.StringVar()
+        self.endLabelText = tk.StringVar()
 
     def canvasSetup(self):
         self.master = tk.Tk()
@@ -58,7 +61,7 @@ class serverGUI():
         self.socket = createHost(self, ip, port)
         self.destroyWaitingForClientScreen()
         self.createMainGame()
-        self.board = BoardClass(self.p1Name.get(), self.p2Name, 0, 0, 0, 0)
+        self.board = BoardClass(self.p2Name, self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 0)
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.showMainGame()
         self.getClientMove()
@@ -66,7 +69,6 @@ class serverGUI():
     def getClientMove(self):
         from player2 import awaitClientMove
         row, col = awaitClientMove(self.socket, self.board)
-        print(f'recieved move {row,col}')
         if(row==0 and col == 0):
             self.btn1["text"] = "X"
         elif(row==0 and col == 1):
@@ -86,7 +88,9 @@ class serverGUI():
         elif(row==2 and col == 2):
             self.btn9["text"] = "X"
         self.board.setLastMove(self.p1Name.get())
+        self.currentTurn.set(f'Current Turn: {self.p2Name}')
         self.enableButtons()
+        self.checkEndGame()
 
     def createWaitingForClientScreen(self):
         self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText)
@@ -121,8 +125,22 @@ class serverGUI():
         self.btn9 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn9)).start, font=("Helvetica", 40), height=2,width=5)
         self.disableAllButtons()
 
+    def destroyMainGame(self):
+        self.playerLabel.destroy()
+        self.currentTurnLabel.destroy()
+        self.opponentLabel.destroy()
+        self.btn1.destroy()
+        self.btn2.destroy()
+        self.btn3.destroy()
+        self.btn4.destroy()
+        self.btn5.destroy()
+        self.btn6.destroy()
+        self.btn7.destroy()
+        self.btn8.destroy()
+        self.btn9.destroy()
+
     def btnClick(self, btn):
-        from player2 import moveServer
+        from player2 import move
         self.disableAllButtons()
         btn["text"] = "O"
         if(btn == self.btn1):
@@ -143,8 +161,10 @@ class serverGUI():
             row, col = 2, 1
         elif(btn == self.btn9):
             row, col = 2, 2
-        moveServer(self.socket, self.board, row, col)
+        move(self.socket, self.board, row, col)
         self.board.setLastMove(self.p2Name)
+        self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
+        self.checkEndGame()
         self.getClientMove()
 
     def showMainGame(self):
@@ -192,8 +212,50 @@ class serverGUI():
         if(self.btn9['text'] == ' '):
             self.btn9['state'] = 'normal'
 
+    def createEndScreen(self):
+        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
+
+    def showEndScreen(self):
+        self.endLabel.grid(row=0, column=0)
+
+    def destroyEndScreen(self):
+        self.endLabel.destroy()
+        self.continueButton.destroy()
+        self.stopButton.destroy()
+
+    def checkEndGame(self):
+        from player2 import playAgain
+        if(self.board.isWinner()):
+            self.destroyMainGame()
+            if(self.board.getThisName() == self.board.getLastMove()):
+                self.endLabelText.set(f"You won! {self.p1Name.get()} is choosing if they want to play again...")
+            else:
+                self.endLabelText.set(f"You lost! {self.p1Name.get()} is choosing if they want to play again...")
+            self.showEndScreen()
+            playAgain(self.socket, self)
+        if(self.board.boardIsFull()):
+            self.destroyMainGame()
+            self.endLabelText.set(f"Tie game! {self.p1Name.get()} is choosing if they want to play again...")
+            self.showEndScreen()
+            playAgain(self.socket, self)
+
+
+    def restartGame(self):
+        self.board.resetGameBoard()
+        self.createMainGame()
+        self.showMainGame()
+
+    def createStatScreen(self):
+        pass
+
+    def showStatScreen(self):
+        print("Hit")
+
+
     def runUI(self):
         self.master.mainloop()
+
+
 
 def runServer():
     gui = serverGUI()
