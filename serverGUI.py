@@ -26,6 +26,12 @@ class serverGUI():
         self.waitingText = tk.StringVar()
         self.currentTurn = tk.StringVar()
         self.endLabelText = tk.StringVar()
+        self.p1NameStat = tk.StringVar()
+        self.p2NameStat = tk.StringVar()
+        self.gamesPlayedStat = tk.StringVar()
+        self.winStat = tk.StringVar()
+        self.lossStat = tk.StringVar()
+        self.tieStat = tk.StringVar()
 
     def canvasSetup(self):
         self.master = tk.Tk()
@@ -48,20 +54,20 @@ class serverGUI():
         self.connectionPortEntry.grid(row=1,column=1, padx=55)
         self.connectionInputButton.grid(row=2)
 
-    def destroyConnectionScreen(self):
-        self.label1.destroy()
-        self.connectionIPEntry.destroy()
-        self.label2.destroy()
-        self.connectionPortEntry.destroy()
-        self.connectionInputButton.destroy()
+    def hideConnectionScreen(self):
+        self.label1.grid_forget()
+        self.connectionIPEntry.grid_forget()
+        self.label2.grid_forget()
+        self.connectionPortEntry.grid_forget()
+        self.connectionInputButton.grid_forget()
 
     def attemptCreateServer(self, ip, port):
         from player2 import createHost
         self.connectionInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
-        self.destroyWaitingForClientScreen()
+        self.hideWaitingForClientScreen()
         self.createMainGame()
-        self.board = BoardClass(self.p2Name, self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 0)
+        self.board = BoardClass(self.p2Name, self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 1)
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.showMainGame()
         self.getClientMove()
@@ -90,7 +96,7 @@ class serverGUI():
         self.board.setLastMove(self.p1Name.get())
         self.currentTurn.set(f'Current Turn: {self.p2Name}')
         self.enableButtons()
-        self.checkEndGame()
+        self.checkEndGame(False)
 
     def createWaitingForClientScreen(self):
         self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText)
@@ -98,15 +104,15 @@ class serverGUI():
     def showWaitingForClientScreen(self):
         self.waitingForClientLabel.grid()
 
-    def destroyWaitingForClientScreen(self):
-        self.waitingForClientLabel.destroy()
+    def hideWaitingForClientScreen(self):
+        self.waitingForClientLabel.grid_forget()
 
     def showErrorServerScreen(self):
         self.label3.grid(row=2,column=1)
 
     def reloadConnectionScreen(self):
-        self.label3.destroy()
-        self.destroyConnectionScreen()
+        self.label3.grid_forget()
+        self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()
 
@@ -125,19 +131,19 @@ class serverGUI():
         self.btn9 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn9)).start, font=("Helvetica", 40), height=2,width=5)
         self.disableAllButtons()
 
-    def destroyMainGame(self):
-        self.playerLabel.destroy()
-        self.currentTurnLabel.destroy()
-        self.opponentLabel.destroy()
-        self.btn1.destroy()
-        self.btn2.destroy()
-        self.btn3.destroy()
-        self.btn4.destroy()
-        self.btn5.destroy()
-        self.btn6.destroy()
-        self.btn7.destroy()
-        self.btn8.destroy()
-        self.btn9.destroy()
+    def hideMainGame(self):
+        self.playerLabel.grid_forget()
+        self.currentTurnLabel.grid_forget()
+        self.opponentLabel.grid_forget()
+        self.btn1.grid_forget()
+        self.btn2.grid_forget()
+        self.btn3.grid_forget()
+        self.btn4.grid_forget()
+        self.btn5.grid_forget()
+        self.btn6.grid_forget()
+        self.btn7.grid_forget()
+        self.btn8.grid_forget()
+        self.btn9.grid_forget()
 
     def btnClick(self, btn):
         from player2 import move
@@ -164,8 +170,7 @@ class serverGUI():
         move(self.socket, self.board, row, col)
         self.board.setLastMove(self.p2Name)
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
-        self.checkEndGame()
-        self.getClientMove()
+        self.checkEndGame(True)
 
     def showMainGame(self):
         self.playerLabel.grid(row=0, column=0)
@@ -218,39 +223,63 @@ class serverGUI():
     def showEndScreen(self):
         self.endLabel.grid(row=0, column=0)
 
-    def destroyEndScreen(self):
-        self.endLabel.destroy()
-        self.continueButton.destroy()
-        self.stopButton.destroy()
+    def hideEndScreen(self):
+        self.endLabel.grid_forget()
 
-    def checkEndGame(self):
+    def checkEndGame(self, getNextMove):
         from player2 import playAgain
         if(self.board.isWinner()):
-            self.destroyMainGame()
+            self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
                 self.endLabelText.set(f"You won! {self.p1Name.get()} is choosing if they want to play again...")
             else:
                 self.endLabelText.set(f"You lost! {self.p1Name.get()} is choosing if they want to play again...")
             self.showEndScreen()
             playAgain(self.socket, self)
-        if(self.board.boardIsFull()):
-            self.destroyMainGame()
+        elif(self.board.boardIsFull()):
+            self.hideMainGame()
             self.endLabelText.set(f"Tie game! {self.p1Name.get()} is choosing if they want to play again...")
             self.showEndScreen()
             playAgain(self.socket, self)
+        else:
+            if(getNextMove == True):
+                self.getClientMove()
 
 
     def restartGame(self):
         self.board.resetGameBoard()
+        self.board.updateGamesPlayed()
+        self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.createMainGame()
         self.showMainGame()
+        self.getClientMove()
 
     def createStatScreen(self):
-        pass
+        self.statsTitleLabel = tk.Label(self.master, text = "Final Stats")
+        self.p1NameLabel = tk.Label(self.master, textvariable = self.p1NameStat)
+        self.p2NameLabel = tk.Label(self.master, textvariable = self.p2NameStat)
+        self.gamesPlayedLabel = tk.Label(self.master, textvariable = self.gamesPlayedStat)
+        self.winLabel = tk.Label(self.master, textvariable = self.winStat)
+        self.lossLabel = tk.Label(self.master, textvariable = self.lossStat)
+        self.tieLabel = tk.Label(self.master, textvariable = self.tieStat)
+        self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
 
     def showStatScreen(self):
-        print("Hit")
-
+        p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
+        self.p1NameStat.set(f'Player 1 Name: {p1Name}')
+        self.p2NameStat.set(f'Player 2 Name (You): {p2Name}')
+        self.gamesPlayedStat.set(f'Games Played: {gamesPlayed}')
+        self.winStat.set(f'Wins: {wins}')
+        self.lossStat.set(f'Losses: {losses}')
+        self.tieStat.set(f'Ties: {ties}')
+        self.statsTitleLabel.grid()
+        self.p1NameLabel.grid()
+        self.p2NameLabel.grid()
+        self.gamesPlayedLabel.grid()
+        self.winLabel.grid()
+        self.lossLabel.grid()
+        self.tieLabel.grid()
+        self.quitButton.grid()
 
     def runUI(self):
         self.master.mainloop()

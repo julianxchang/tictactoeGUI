@@ -11,7 +11,7 @@ class BoardClass:
         board (list): The current board.
     """
 
-    def __init__(self, thisName: str = "", p1Name: str = "", p2Name: str = "", last_move: str = "", num_wins: int = 0, num_ties: int = 0, num_losses: int = 0, total_games: int = 0, board: list = [[" "," "," "],[" "," "," "],[" "," "," "]]):
+    def __init__(self, thisName: str = "", p1Name: str = "", p2Name: str = "", last_move: str = "", num_wins: int = 0, num_ties: int = 0, num_losses: int = 0, games_played: int = 0, board: list = [[" "," "," "],[" "," "," "],[" "," "," "]]):
         """Creates a BoardClass with all the information of the board.
 
         Args:
@@ -33,7 +33,7 @@ class BoardClass:
         self.setNumWins(num_wins)
         self.setNumTies(num_ties)
         self.setNumLosses(num_losses)
-        self.setTotalGames(total_games)
+        self.setGamesPlayed(games_played)
         self.setBoard(board)
 
     def setThisName(self, thisName: str) -> None:
@@ -105,7 +105,7 @@ class BoardClass:
         """
         self.num_losses = num_losses
 
-    def setTotalGames(self, total_games: str) -> None:
+    def setGamesPlayed(self, games_played: str) -> None:
         """Sets the number of games played.
 
         Args:
@@ -114,7 +114,7 @@ class BoardClass:
         Returns:
             None.
         """
-        self.total_games = total_games
+        self.games_played = games_played
 
     def setBoard(self, board: str) -> None:
         """Sets the current board.
@@ -207,7 +207,7 @@ class BoardClass:
         """
         return self.num_losses
 
-    def getTotalGames(self) -> int:
+    def getGamesPlayed(self) -> int:
         """Gets the total number of games played.
 
         Args:
@@ -216,9 +216,9 @@ class BoardClass:
         Returns:
             A copy of the attribute gamedPlayed.
         """
-        return self.total_games
+        return self.games_played
 
-    def updateTotalGames(self) -> None:
+    def updateGamesPlayed(self) -> None:
         """Updates the number of games played by one.
 
         Args:
@@ -227,7 +227,7 @@ class BoardClass:
         Returns:
             None.
         """
-        self.setTotalGames(self.getTotalGames() + 1)
+        self.setGamesPlayed(self.getGamesPlayed() + 1)
 
     def resetGameBoard(self) -> None:
         """Resets the gameboard.
@@ -306,11 +306,9 @@ class BoardClass:
         if win == True:
             if self.getThisName() == self.getLastMove():
                 self.setNumWins(self.getNumWins() + 1)
-                print("You Won!")
                 return True
             else:
                 self.setNumLosses(self.getNumLosses() + 1)
-                print("You Lost!")
                 return True
         return False
 
@@ -349,25 +347,4 @@ class BoardClass:
         Returns:
             None.
         """
-        return 
-        print("Last person to make move:", self.getLastMove())
-        print("Total Games Played:", self.getTotalGames())
-        print("Wins:", self.getNumWins())
-        print("Ties:", self.getNumTies())
-        print("Losses:", self.getNumLosses())
-
-    def printBoard(self) -> None:
-        """Prints the current board.
-
-        Args:
-            None.
-
-        Returns:
-            None.
-        """
-        i = 0
-        for row in self.board:
-            print(" | ".join(row))
-            if(i<2):
-                print("---------")
-            i += 1
+        return self.p1Name, self.p2Name, self.games_played, self.num_wins, self.num_losses, self.num_ties

@@ -8,8 +8,8 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
     try:
         serverSocket.bind((ip, port))
         gui.waitingText.set(f"Waiting for connection on {gui.connectionIP.get()}:{gui.connectionPort.get()}...")
-        gui.destroyConnectionScreen()
-        gui.label3.destroy()
+        gui.hideConnectionScreen()
+        gui.label3.grid_forget()
         gui.showWaitingForClientScreen()
         serverSocket.listen(1)
         clientSocket, clientAddress = serverSocket.accept()
@@ -35,11 +35,10 @@ def move(clientSocket, board, row, col) -> tuple[int, int]:
     board.updateGameBoard(row, col)
 
 def playAgain(clientSocket, gui) -> bool:
-    print("waiting for move")
     p1Choice = clientSocket.recv(1024).decode('ascii')
+    gui.hideEndScreen()
     if(p1Choice == "Play Again"):
-        gui.createMainGame()
-        gui.showMainGame()
+        gui.restartGame()
     else:
         gui.showStatScreen()
 

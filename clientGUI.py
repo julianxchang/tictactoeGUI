@@ -13,6 +13,7 @@ class clientServer():
         self.createConnectionScreen()
         self.createRequestNameScreen()
         self.createEndScreen()
+        self.createStatScreen()
         self.showConnectionScreen()
         self.runUI()
 
@@ -24,6 +25,12 @@ class clientServer():
         self.p1Name = tk.StringVar()
         self.currentTurn = tk.StringVar()
         self.endLabelText = tk.StringVar()
+        self.p1NameStat = tk.StringVar()
+        self.p2NameStat = tk.StringVar()
+        self.gamesPlayedStat = tk.StringVar()
+        self.winStat = tk.StringVar()
+        self.lossStat = tk.StringVar()
+        self.tieStat = tk.StringVar()
 
     def canvasSetup(self):
         self.master = tk.Tk()
@@ -48,13 +55,6 @@ class clientServer():
         self.connectionPortEntry.grid(row=1,column=1, padx=55)
         self.connectionInputButton.grid(row=2)
 
-    def destroyConnectionScreen(self):
-        self.label1.destroy()
-        self.connectionIPEntry.destroy()
-        self.label2.destroy()
-        self.connectionPortEntry.destroy()
-        self.connectionInputButton.destroy()
-
     def attemptConnection(self, ip, port):
         from player1 import connect_to_host
         self.connectionInputButton["state"] = "disabled"
@@ -66,10 +66,10 @@ class clientServer():
         self.noButton.grid(row=2,column=3)
 
     def reloadConnectionScreen(self):
-        self.label3.destroy()
-        self.yesButton.destroy()
-        self.noButton.destroy()
-        self.destroyConnectionScreen()
+        self.label3.grid_forget()
+        self.yesButton.grid_forget()
+        self.noButton.grid_forget()
+        self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()
 
@@ -89,21 +89,21 @@ class clientServer():
         try:
             requestNames(self.socket, p1Name)
             self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
-            self.destroyRequestNameScreen()
-            self.board = BoardClass(self.p1Name.get(), self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 0)
+            self.hideRequestNameScreen()
+            self.board = BoardClass(self.p1Name.get(), self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 1)
             self.createMainGame()
             self.showMainGame()
         except:
-            self.destroyRequestNameScreen()
+            self.hideRequestNameScreen()
             self.createRequestNameScreen()
             self.showRequestNameScreen()
             self.showInvalidUsername()
 
-    def destroyRequestNameScreen(self):
-        self.requestNameLabel.destroy()
-        self.requestNameInput.destroy()
-        self.usernameButton.destroy()
-        self.invalidNameLabel.destroy()
+    def hideRequestNameScreen(self):
+        self.requestNameLabel.grid_forget()
+        self.requestNameInput.grid_forget()
+        self.usernameButton.grid_forget()
+        self.invalidNameLabel.grid_forget()
 
     def showInvalidUsername(self):
         self.invalidNameLabel.grid(row=1,column=1)
@@ -122,19 +122,19 @@ class clientServer():
         self.btn8 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn8)).start, font=("Helvetica", 40), height=2,width=5)
         self.btn9 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn9)).start, font=("Helvetica", 40), height=2,width=5)
 
-    def destroyMainGame(self):
-        self.playerLabel.destroy()
-        self.currentTurnLabel.destroy()
-        self.opponentLabel.destroy()
-        self.btn1.destroy()
-        self.btn2.destroy()
-        self.btn3.destroy()
-        self.btn4.destroy()
-        self.btn5.destroy()
-        self.btn6.destroy()
-        self.btn7.destroy()
-        self.btn8.destroy()
-        self.btn9.destroy()
+    def hideMainGame(self):
+        self.playerLabel.grid_forget()
+        self.currentTurnLabel.grid_forget()
+        self.opponentLabel.grid_forget()
+        self.btn1.grid_forget()
+        self.btn2.grid_forget()
+        self.btn3.grid_forget()
+        self.btn4.grid_forget()
+        self.btn5.grid_forget()
+        self.btn6.grid_forget()
+        self.btn7.grid_forget()
+        self.btn8.grid_forget()
+        self.btn9.grid_forget()
 
     def btnClick(self, btn):
         from player1 import move
@@ -161,8 +161,7 @@ class clientServer():
         move(self.socket, self.board, row, col)
         self.board.setLastMove(self.p1Name.get())
         self.currentTurn.set(f'Current Turn: {self.p2Name}')
-        self.checkEndGame()
-        self.getServerMove()
+        self.checkEndGame(True)
 
     def getServerMove(self):
         from player1 import awaitServerMove
@@ -188,7 +187,7 @@ class clientServer():
         self.board.setLastMove(self.p2Name)
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.enableButtons()
-        self.checkEndGame()
+        self.checkEndGame(False)
 
     def disableAllButtons(self):
         self.btn1['state'] = 'disabled'
@@ -238,42 +237,77 @@ class clientServer():
     def createEndScreen(self):
         from player1 import playAgain, endGame
         self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
-        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:playAgain(self.socket, self))
-        self.stopButton = tk.Button(self.master, text="No", command=lambda:endGame(self.socket, self))
+        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:[playAgain(self.socket, self), self.hideEndScreen()])
+        self.stopButton = tk.Button(self.master, text="No", command=lambda:[endGame(self.socket, self), self.hideEndScreen()])
 
     def showEndScreen(self):
         self.endLabel.grid(row=0, column=0)
         self.continueButton.grid(row=0, column=1)
         self.stopButton.grid(row=0, column=2)
 
-    def destroyEndScreen(self):
-        self.endLabel.destroy()
-        self.continueButton.destroy()
-        self.stopButton.destroy()
+    def hideEndScreen(self):
+        self.endLabel.grid_forget()
+        self.continueButton.grid_forget()
+        self.stopButton.grid_forget()
 
-    def checkEndGame(self):
+    def checkEndGame(self, getNextMove):
         if(self.board.isWinner()):
-            self.destroyMainGame()
+            self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
                 self.endLabelText.set("You won! Play again?")
             else:
                 self.endLabelText.set("You lost! Play again?")
             self.showEndScreen()
-        if(self.board.boardIsFull()):
-            self.destroyMainGame()
+        elif(self.board.boardIsFull()):
+            self.hideMainGame()
             self.endLabelText.set("Tie game! Play again?")
             self.showEndScreen()
+        else:
+            if(getNextMove == True):
+                self.getServerMove()
 
     def restartGame(self):
         self.board.resetGameBoard()
+        self.board.updateGamesPlayed()
+        self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.createMainGame()
         self.showMainGame()
 
     def createStatScreen(self):
-        pass
+        self.statsTitleLabel = tk.Label(self.master, text = "Final Stats")
+        self.p1NameLabel = tk.Label(self.master, textvariable = self.p1NameStat)
+        self.p2NameLabel = tk.Label(self.master, textvariable = self.p2NameStat)
+        self.gamesPlayedLabel = tk.Label(self.master, textvariable = self.gamesPlayedStat)
+        self.winLabel = tk.Label(self.master, textvariable = self.winStat)
+        self.lossLabel = tk.Label(self.master, textvariable = self.lossStat)
+        self.tieLabel = tk.Label(self.master, textvariable = self.tieStat)
+        self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
+
 
     def showStatScreen(self):
-        print("hit")
+        p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
+        self.p1NameStat.set(f'Player 1 Name (You): {p1Name}')
+        self.p2NameStat.set(f'Player 2 Name: {p2Name}')
+        self.gamesPlayedStat.set(f'Games Played: {gamesPlayed}')
+        self.winStat.set(f'Wins: {wins}')
+        self.lossStat.set(f'Losses: {losses}')
+        self.tieStat.set(f'Ties: {ties}')
+        self.statsTitleLabel.grid()
+        self.p1NameLabel.grid()
+        self.p2NameLabel.grid()
+        self.gamesPlayedLabel.grid()
+        self.winLabel.grid()
+        self.lossLabel.grid()
+        self.tieLabel.grid()
+        self.quitButton.grid()
+
+    def hideConnectionScreen(self):
+        self.label1.grid_forget()
+        self.connectionIPEntry.grid_forget()
+        self.label2.grid_forget()
+        self.connectionPortEntry.grid_forget()
+        self.connectionInputButton.grid_forget()
+
 
     def runUI(self):
         self.master.mainloop()

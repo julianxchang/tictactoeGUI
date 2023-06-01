@@ -5,7 +5,7 @@ def connect_to_host(gui, ip, port):
     connectionSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         connectionSocket.connect((ip,port))
-        gui.destroyConnectionScreen()
+        gui.hideConnectionScreen()
         gui.showRequestNameScreen()
         return connectionSocket
     except:
@@ -29,7 +29,6 @@ def awaitServerMove(connectionSocket, board):
 
 def playAgain(connectionSocket, gui):
     connectionSocket.send(b"Play Again")
-    gui.destroyEndScreen()
     gui.restartGame()
 
 def endGame(connectionSocket, gui):
