@@ -190,7 +190,6 @@ class clientServer():
         self.enableButtons()
         self.checkEndGame()
 
-
     def disableAllButtons(self):
         self.btn1['state'] = 'disabled'
         self.btn2['state'] = 'disabled'
