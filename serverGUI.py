@@ -51,7 +51,7 @@ class serverGUI():
         self.connectionInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
         if(self.socket != False):
-            self.startGame
+            self.startGame()
 
     def startGame(self):
         self.hideWaitingForClientScreen()
@@ -109,6 +109,9 @@ class serverGUI():
 
     def hideWaitingForClientScreen(self):
         self.waitingForClientLabel.grid_forget()
+
+    def showErrorServerScreen(self):
+        self.invalidServerLabel.grid(row=2,column=1)
 
     def reloadConnectionScreen(self):
         self.invalidServerLabel.grid_forget()

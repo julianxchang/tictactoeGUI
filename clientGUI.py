@@ -48,11 +48,65 @@ class clientServer():
         self.yesButton = tk.Button(self.master, text="Yes", command=lambda:self.reloadConnectionScreen())
         self.noButton = tk.Button(self.master, text="No", command = self.master.destroy)
 
+    def showConnectionScreen(self):
+        self.label1.grid(row=0,column=0)
+        self.connectionIPEntry.grid(row=0,column=1, padx=55)
+        self.label2.grid(row=1,column=0)
+        self.connectionPortEntry.grid(row=1,column=1, padx=55)
+        self.connectionInputButton.grid(row=2)
+
+    def attemptConnection(self, ip, port):
+        from player1 import connect_to_host
+        self.connectionInputButton["state"] = "disabled"
+        self.socket = connect_to_host(self, ip, port)
+
+    def showErrorClientScreen(self):
+        self.label3.grid(row=2,column=1)
+        self.yesButton.grid(row=2,column=2)
+        self.noButton.grid(row=2,column=3)
+
+    def reloadConnectionScreen(self):
+        self.label3.grid_forget()
+        self.yesButton.grid_forget()
+        self.noButton.grid_forget()
+        self.hideConnectionScreen()
+        self.createConnectionScreen()
+        self.showConnectionScreen()
+
     def createRequestNameScreen(self):
         self.requestNameLabel = tk.Label(self.master, text="Please enter your username (only alphanumeric):")
         self.requestNameInput = tk.Entry(self.master, textvariable=self.p1Name)
-        self.usernameButton = tk.Button(self.master, text="Begin Game", command=Thread(target=lambda:self.startGame(self.p1Name.get())).start)
+        self.usernameButton = tk.Button(self.master, text="Begin Game", command=Thread(target=lambda:self.confirmUsername(self.p1Name.get())).start)
         self.invalidNameLabel = tk.Label(self.master, text="Please only enter alphanumeric usernames.", fg="red")
+
+    def showRequestNameScreen(self):
+        self.requestNameLabel.grid(row=0,column=0)
+        self.requestNameInput.grid(row=0,column=1,padx=60)
+        self.usernameButton.grid(row=1,column=0)
+
+    def confirmUsername(self, p1Name):
+        from player1 import requestNames
+        try:
+            requestNames(self.socket, p1Name)
+            self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
+            self.hideRequestNameScreen()
+            self.board = BoardClass(self.p1Name.get(), self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 1)
+            self.createMainGame()
+            self.showMainGame()
+        except:
+            self.hideRequestNameScreen()
+            self.createRequestNameScreen()
+            self.showRequestNameScreen()
+            self.showInvalidUsername()
+
+    def hideRequestNameScreen(self):
+        self.requestNameLabel.grid_forget()
+        self.requestNameInput.grid_forget()
+        self.usernameButton.grid_forget()
+        self.invalidNameLabel.grid_forget()
+
+    def showInvalidUsername(self):
+        self.invalidNameLabel.grid(row=1,column=1)
 
     def createMainGame(self):
         self.playerLabel = tk.Label(self.master, text=f"Player Name: {self.p1Name.get()}")
@@ -67,88 +121,6 @@ class clientServer():
         self.btn7 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn7)).start, font=("Helvetica", 40), height=2,width=5)
         self.btn8 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn8)).start, font=("Helvetica", 40), height=2,width=5)
         self.btn9 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn9)).start, font=("Helvetica", 40), height=2,width=5)
-
-    def createEndScreen(self):
-        from player1 import playAgain, endGame
-        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
-        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:[playAgain(self.socket), self.restartGame()])
-        self.stopButton = tk.Button(self.master, text="No", command=lambda:[endGame(self.socket, self), self.hideEndScreen()])
-
-    def createStatScreen(self):
-        self.statsTitleLabel = tk.Label(self.master, text = "Final Stats")
-        self.p1NameLabel = tk.Label(self.master, textvariable = self.p1NameStat)
-        self.p2NameLabel = tk.Label(self.master, textvariable = self.p2NameStat)
-        self.gamesPlayedLabel = tk.Label(self.master, textvariable = self.gamesPlayedStat)
-        self.winLabel = tk.Label(self.master, textvariable = self.winStat)
-        self.lossLabel = tk.Label(self.master, textvariable = self.lossStat)
-        self.tieLabel = tk.Label(self.master, textvariable = self.tieStat)
-        self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
-
-    def showConnectionScreen(self):
-        self.label1.grid(row=0,column=0)
-        self.connectionIPEntry.grid(row=0,column=1, padx=55)
-        self.label2.grid(row=1,column=0)
-        self.connectionPortEntry.grid(row=1,column=1, padx=55)
-        self.connectionInputButton.grid(row=2)
-
-    def showRequestNameScreen(self):
-        self.requestNameLabel.grid(row=0,column=0)
-        self.requestNameInput.grid(row=0,column=1,padx=60)
-        self.usernameButton.grid(row=1,column=0)
-
-    def showMainGame(self):
-        self.playerLabel.grid(row=0, column=0)
-        self.currentTurnLabel.grid(row=0, column=1)
-        self.opponentLabel.grid(row=0, column=2)
-        self.btn1.grid(row=1, column=0, padx=5, pady=5)
-        self.btn2.grid(row=1, column=1, padx=5, pady=5)
-        self.btn3.grid(row=1, column=2, padx=5, pady=5)
-        self.btn4.grid(row=2, column=0, padx=5, pady=5)
-        self.btn5.grid(row=2, column=1, padx=5, pady=5)
-        self.btn6.grid(row=2, column=2, padx=5, pady=5)
-        self.btn7.grid(row=3, column=0, padx=5, pady=5)
-        self.btn8.grid(row=3, column=1, padx=5, pady=5)
-        self.btn9.grid(row=3, column=2, padx=5, pady=5)
-
-    def showEndScreen(self):
-        self.endLabel.grid(row=0, column=0)
-        self.continueButton.grid(row=0, column=1)
-        self.stopButton.grid(row=0, column=2)
-
-    def showStatScreen(self):
-        p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
-        self.p1NameStat.set(f'Player 1 Name (You): {p1Name}')
-        self.p2NameStat.set(f'Player 2 Name: {p2Name}')
-        self.gamesPlayedStat.set(f'Games Played: {gamesPlayed}')
-        self.winStat.set(f'Wins: {wins}')
-        self.lossStat.set(f'Losses: {losses}')
-        self.tieStat.set(f'Ties: {ties}')
-        self.statsTitleLabel.grid()
-        self.p1NameLabel.grid()
-        self.p2NameLabel.grid()
-        self.gamesPlayedLabel.grid()
-        self.winLabel.grid()
-        self.lossLabel.grid()
-        self.tieLabel.grid()
-        self.quitButton.grid()
-
-    def hideEndScreen(self):
-        self.endLabel.grid_forget()
-        self.continueButton.grid_forget()
-        self.stopButton.grid_forget()
-
-    def hideConnectionScreen(self):
-        self.label1.grid_forget()
-        self.connectionIPEntry.grid_forget()
-        self.label2.grid_forget()
-        self.connectionPortEntry.grid_forget()
-        self.connectionInputButton.grid_forget()
-
-    def hideRequestNameScreen(self):
-        self.requestNameLabel.grid_forget()
-        self.requestNameInput.grid_forget()
-        self.usernameButton.grid_forget()
-        self.invalidNameLabel.grid_forget()
 
     def hideMainGame(self):
         self.playerLabel.grid_forget()
@@ -248,36 +220,35 @@ class clientServer():
         if(self.btn9['text'] == ' '):
             self.btn9['state'] = 'normal'
 
-    def attemptConnection(self, ip, port):
-        from player1 import connect_to_host
-        self.connectionInputButton["state"] = "disabled"
-        self.socket = connect_to_host(self, ip, port)
+    def showMainGame(self):
+        self.playerLabel.grid(row=0, column=0)
+        self.currentTurnLabel.grid(row=0, column=1)
+        self.opponentLabel.grid(row=0, column=2)
+        self.btn1.grid(row=1, column=0, padx=5, pady=5)
+        self.btn2.grid(row=1, column=1, padx=5, pady=5)
+        self.btn3.grid(row=1, column=2, padx=5, pady=5)
+        self.btn4.grid(row=2, column=0, padx=5, pady=5)
+        self.btn5.grid(row=2, column=1, padx=5, pady=5)
+        self.btn6.grid(row=2, column=2, padx=5, pady=5)
+        self.btn7.grid(row=3, column=0, padx=5, pady=5)
+        self.btn8.grid(row=3, column=1, padx=5, pady=5)
+        self.btn9.grid(row=3, column=2, padx=5, pady=5)
 
-    def reloadConnectionScreen(self):
-        self.label3.grid_forget()
-        self.yesButton.grid_forget()
-        self.noButton.grid_forget()
-        self.hideConnectionScreen()
-        self.createConnectionScreen()
-        self.showConnectionScreen()
+    def createEndScreen(self):
+        from player1 import playAgain, endGame
+        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
+        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:[playAgain(self.socket, self), self.hideEndScreen()])
+        self.stopButton = tk.Button(self.master, text="No", command=lambda:[endGame(self.socket, self), self.hideEndScreen()])
 
-    def startGame(self, p1Name):
-        from player1 import requestNames
-        try:
-            requestNames(self.socket, p1Name)
-            self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
-            self.hideRequestNameScreen()
-            self.board = BoardClass(self.p1Name.get(), self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 1)
-            self.createMainGame()
-            self.showMainGame()
-        except:
-            self.reloadRequestNameScreen()
+    def showEndScreen(self):
+        self.endLabel.grid(row=0, column=0)
+        self.continueButton.grid(row=0, column=1)
+        self.stopButton.grid(row=0, column=2)
 
-    def reloadRequestNameScreen(self):
-        self.hideRequestNameScreen()
-        self.createRequestNameScreen()
-        self.showRequestNameScreen()
-        self.invalidNameLabel.grid(row=1,column=1)
+    def hideEndScreen(self):
+        self.endLabel.grid_forget()
+        self.continueButton.grid_forget()
+        self.stopButton.grid_forget()
 
     def checkEndGame(self, getNextMove):
         if(self.board.isWinner()):
@@ -296,12 +267,46 @@ class clientServer():
                 self.getServerMove()
 
     def restartGame(self):
-        self.hideEndScreen()
         self.board.resetGameBoard()
         self.board.updateGamesPlayed()
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.createMainGame()
         self.showMainGame()
+
+    def createStatScreen(self):
+        self.statsTitleLabel = tk.Label(self.master, text = "Final Stats")
+        self.p1NameLabel = tk.Label(self.master, textvariable = self.p1NameStat)
+        self.p2NameLabel = tk.Label(self.master, textvariable = self.p2NameStat)
+        self.gamesPlayedLabel = tk.Label(self.master, textvariable = self.gamesPlayedStat)
+        self.winLabel = tk.Label(self.master, textvariable = self.winStat)
+        self.lossLabel = tk.Label(self.master, textvariable = self.lossStat)
+        self.tieLabel = tk.Label(self.master, textvariable = self.tieStat)
+        self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
+
+
+    def showStatScreen(self):
+        p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
+        self.p1NameStat.set(f'Player 1 Name (You): {p1Name}')
+        self.p2NameStat.set(f'Player 2 Name: {p2Name}')
+        self.gamesPlayedStat.set(f'Games Played: {gamesPlayed}')
+        self.winStat.set(f'Wins: {wins}')
+        self.lossStat.set(f'Losses: {losses}')
+        self.tieStat.set(f'Ties: {ties}')
+        self.statsTitleLabel.grid()
+        self.p1NameLabel.grid()
+        self.p2NameLabel.grid()
+        self.gamesPlayedLabel.grid()
+        self.winLabel.grid()
+        self.lossLabel.grid()
+        self.tieLabel.grid()
+        self.quitButton.grid()
+
+    def hideConnectionScreen(self):
+        self.label1.grid_forget()
+        self.connectionIPEntry.grid_forget()
+        self.label2.grid_forget()
+        self.connectionPortEntry.grid_forget()
+        self.connectionInputButton.grid_forget()
 
 
     def runUI(self):

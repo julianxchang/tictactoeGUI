@@ -9,9 +9,7 @@ def connect_to_host(gui, ip, port):
         gui.showRequestNameScreen()
         return connectionSocket
     except:
-        gui.label3.grid(row=2,column=1)
-        gui.yesButton.grid(row=2,column=2)
-        gui.noButton.grid(row=2,column=3)
+        gui.showErrorClientScreen()
 
 def requestNames(connectionSocket, p1Name) -> tuple[str, str]:
     if(not p1Name.isalnum()):
@@ -29,8 +27,9 @@ def awaitServerMove(connectionSocket, board):
     board.updateGameBoard(row, col)
     return row, col
 
-def playAgain(connectionSocket):
+def playAgain(connectionSocket, gui):
     connectionSocket.send(b"Play Again")
+    gui.restartGame()
 
 def endGame(connectionSocket, gui):
     connectionSocket.send(b"Fun Times")
