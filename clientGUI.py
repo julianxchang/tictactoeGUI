@@ -40,13 +40,13 @@ class clientServer():
         self.master.resizable(0,0)
 
     def createConnectionScreen(self):
-        self.label1 = tk.Label(self.master, text="Host Name (or IP address)", font = ("Arial, 10"))
+        self.connectionIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font = ("Arial, 10"))
         self.connectionIPEntry = tk.Entry(self.master, textvariable=self.connectionIP, width=30)
-        self.label2 = tk.Label(self.master, text = "Port", font = ("Arial, 10"))
+        self.connectionPortLabel = tk.Label(self.master, text = "Port", font = ("Arial, 10"))
         self.connectionPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font=("Arial, 10"), width=17)
         self.colonLabel = tk.Label(self.master, text=":", font=("Arial, 10"))
         self.connectionInputButton = tk.Button(self.master, text="Connect", command=Thread(target=lambda:self.attemptConnection(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
-        self.label3 = tk.Label(self.master, text="Connection could not be made.\nTry again?", fg="red")
+        self.invalidConnectionLabel = tk.Label(self.master, text="Connection could not be made.\nTry again?", fg="red")
         self.yesButton = tk.Button(self.master, text="Yes", command=lambda:self.reloadConnectionScreen())
         self.noButton = tk.Button(self.master, text="No", command = self.master.destroy)
 
@@ -89,15 +89,15 @@ class clientServer():
         self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
 
     def showConnectionScreen(self):
-        self.label1.grid(row=0,column=0, sticky="W")
+        self.connectionIPLabel.grid(row=0,column=0, sticky="W")
         self.connectionIPEntry.grid(row=1,column=0)
-        self.label2.grid(row=0,column=2, sticky="W")
+        self.connectionPortLabel.grid(row=0,column=2, sticky="W")
         self.connectionPortEntry.grid(row=1,column=2)
         self.colonLabel.grid(row=1,column=1)
         self.connectionInputButton.grid(row=2, sticky="news", columnspan=3, pady=5)
 
     def showErrorClientScreen(self):
-        self.label3.grid(row=0,column=3, rowspan=2, columnspan=2, padx=17)
+        self.invalidConnectionLabel.grid(row=0,column=3, rowspan=2, columnspan=2, padx=17)
         self.yesButton.grid(row=2,column=3, padx=(10,5), pady=5, sticky="news")
         self.noButton.grid(row=2,column=4, padx=(5,10), pady=5, sticky="news")
 
@@ -144,9 +144,9 @@ class clientServer():
         self.quitButton.grid()
 
     def hideConnectionScreen(self):
-        self.label1.grid_forget()
+        self.connectionIPLabel.grid_forget()
         self.connectionIPEntry.grid_forget()
-        self.label2.grid_forget()
+        self.connectionPortLabel.grid_forget()
         self.connectionPortEntry.grid_forget()
         self.connectionInputButton.grid_forget()
         self.colonLabel.grid_forget()
@@ -183,7 +183,7 @@ class clientServer():
         self.socket = connect_to_host(self, ip, port)
 
     def reloadConnectionScreen(self):
-        self.label3.grid_forget()
+        self.invalidConnectionLabel.grid_forget()
         self.yesButton.grid_forget()
         self.noButton.grid_forget()
         self.hideConnectionScreen()
