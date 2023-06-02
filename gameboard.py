@@ -269,7 +269,7 @@ class BoardClass:
 
         Checks current board twice, each time with token = "X" and token = "O"
         to see if any player has made a winning move. If a winning move is found,
-        this function will increment attribute num_wins by 1 if the attribute name 
+        this function will increment attribute num_wins by 1 if the attribute name
         equals the attribute last_move. Otherwise, the attribute num_losses will
         increment by 1.
 
@@ -333,7 +333,7 @@ class BoardClass:
         self.setNumTies(self.getNumTies() + 1)
         return True
 
-    def computeStats(self) -> None:
+    def computeStats(self) -> tuple[str, str, int, int, int, int]:
         """Computes the final stats for the current player.
 
         This function will return player 1's name, player 2's name,
