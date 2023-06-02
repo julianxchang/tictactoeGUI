@@ -334,11 +334,10 @@ class BoardClass:
         return True
 
     def computeStats(self) -> None:
-        """Prints the stats.
+        """Computes the final stats for the current player.
 
-        This function will print the players name, last person
-        to make a move, total games played, and number of wins,
-        ties, and losses.
+        This function will return player 1's name, player 2's name,
+        total games played, and number of wins, losses, and ties.
 
         Args:
             None.
