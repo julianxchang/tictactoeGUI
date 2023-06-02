@@ -43,7 +43,7 @@ class serverGUI():
         self.serverIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font = ("Arial, 10"))
         self.serverIPEntry = tk.Entry(self.master, textvariable=self.connectionIP, width = 30)
         self.serverPortLabel = tk.Label(self.master, text = "Port", font = ("Arial, 10"))
-        self.serverPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font = ("Arial, 10"))
+        self.serverPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font = ("Arial, 10"), width=17)
         self.colonLabel = tk.Label(self.master, text=":", font=("Arial, 10"))
         self.serverInputButton = tk.Button(self.master, text="Create Server", command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
         self.invalidServerLabel = tk.Label(self.master, text="Invalid server ip/port. Please try again", fg="red")
@@ -79,18 +79,21 @@ class serverGUI():
         self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
 
     def showConnectionScreen(self):
-        self.master.geometry("348x95")
+        self.master.geometry("358x131")
         self.master.resizable(0,0)
-        self.serverIPLabel.grid(row=0,column=0, sticky="W", padx=(5,0))
-        self.serverIPEntry.grid(row=1,column=0, padx=(5,0))
-        self.serverPortLabel.grid(row=0,column=2, sticky="W")
+        self.serverIPLabel.grid(row=0,column=0, sticky="W", padx=(20,0), pady=(20,0))
+        self.serverIPEntry.grid(row=1,column=0, padx=(20,0))
+        self.serverPortLabel.grid(row=0,column=2, sticky="W", pady=(20,0))
         self.serverPortEntry.grid(row=1,column=2)
         self.colonLabel.grid(row=1,column=1)
-        self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(5,0))
+        self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
 
     def showErrorServerScreen(self):
+        self.hideConnectionScreen()
+        self.createConnectionScreen()
+        self.showConnectionScreen()
         self.master.resizable(1,1)
-        self.master.geometry("348x120")
+        self.master.geometry("358x155")
         self.master.resizable(0,0)
         self.invalidServerLabel.grid(row=3,columnspan=3)
 
@@ -167,12 +170,6 @@ class serverGUI():
         self.socket = createHost(self, ip, port)
         if(self.socket != False):
             self.startGame()
-
-    def reloadConnectionScreen(self):
-        self.invalidServerLabel.grid_forget()
-        self.hideConnectionScreen()
-        self.createConnectionScreen()
-        self.showConnectionScreen()
 
     def startGame(self):
         self.hideWaitingForClientScreen()

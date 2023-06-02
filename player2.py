@@ -23,7 +23,6 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
         requestNames(gui, clientSocket)
         return clientSocket
     except:
-        gui.reloadConnectionScreen()
         gui.showErrorServerScreen()
         return False
 
