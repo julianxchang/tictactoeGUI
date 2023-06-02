@@ -37,18 +37,19 @@ class serverGUI():
         self.master = tk.Tk()
         self.master.title("Server")
         self.master.geometry("526x570")
-        self.master.resizable(0,0)
+        self.master.resizable(1,1)
 
     def createConnectionScreen(self):
-        self.serverIpLabel = tk.Label(self.master, text="Enter host ip address:")
-        self.connectionIPEntry = tk.Entry(self.master, textvariable=self.connectionIP)
-        self.serverPortLabel = tk.Label(self.master, text = "Enter host port number:")
-        self.connectionPortEntry = tk.Entry(self.master, textvariable=self.connectionPort)
-        self.connectionInputButton = tk.Button(self.master, text="Create Server", command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start)
+        self.serverIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font = ("Arial, 10"))
+        self.serverIPEntry = tk.Entry(self.master, textvariable=self.connectionIP, width = 30)
+        self.serverPortLabel = tk.Label(self.master, text = "Port", font = ("Arial, 10"))
+        self.serverPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font = ("Arial, 10"))
+        self.colonLabel = tk.Label(self.master, text=":", font=("Arial, 10"))
+        self.serverInputButton = tk.Button(self.master, text="Create Server", command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
         self.invalidServerLabel = tk.Label(self.master, text="Invalid server ip/port. Please try again", fg="red")
 
     def createWaitingForClientScreen(self):
-        self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText)
+        self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText, font=("Arial", 15))
 
     def createMainGame(self):
         self.playerLabel = tk.Label(self.master, text=f"Player Name: {self.p2Name}")
@@ -78,16 +79,28 @@ class serverGUI():
         self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
 
     def showConnectionScreen(self):
-        self.serverIpLabel.grid(row=0,column=0)
-        self.connectionIPEntry.grid(row=0,column=1, padx=55)
-        self.serverPortLabel.grid(row=1,column=0)
-        self.connectionPortEntry.grid(row=1,column=1, padx=55)
-        self.connectionInputButton.grid(row=2)
+        self.master.geometry("348x95")
+        self.master.resizable(0,0)
+        self.serverIPLabel.grid(row=0,column=0, sticky="W", padx=(5,0))
+        self.serverIPEntry.grid(row=1,column=0, padx=(5,0))
+        self.serverPortLabel.grid(row=0,column=2, sticky="W")
+        self.serverPortEntry.grid(row=1,column=2)
+        self.colonLabel.grid(row=1,column=1)
+        self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(5,0))
+
+    def showErrorServerScreen(self):
+        self.master.resizable(1,1)
+        self.master.geometry("348x120")
+        self.master.resizable(0,0)
+        self.invalidServerLabel.grid(row=3,columnspan=3)
 
     def showWaitingForClientScreen(self):
-        self.waitingForClientLabel.grid()
+        self.waitingForClientLabel.grid(padx=20, pady=20)
 
     def showMainGame(self):
+        self.master.resizable(1,1)
+        self.master.geometry("526x570")
+        self.master.resizable(0,0)
         self.playerLabel.grid(row=0, column=0)
         self.currentTurnLabel.grid(row=0, column=1)
         self.opponentLabel.grid(row=0, column=2)
@@ -120,11 +133,15 @@ class serverGUI():
         self.quitButton.grid()
 
     def hideConnectionScreen(self):
-        self.serverIpLabel.grid_forget()
-        self.connectionIPEntry.grid_forget()
+        self.serverIPLabel.grid_forget()
+        self.serverIPEntry.grid_forget()
         self.serverPortLabel.grid_forget()
-        self.connectionPortEntry.grid_forget()
-        self.connectionInputButton.grid_forget()
+        self.serverPortEntry.grid_forget()
+        self.serverInputButton.grid_forget()
+        self.colonLabel.grid_forget()
+
+    def hideErrorServerScreen(self):
+        self.invalidServerLabel.grid_forget()
 
     def hideWaitingForClientScreen(self):
         self.waitingForClientLabel.grid_forget()
@@ -146,7 +163,7 @@ class serverGUI():
 
     def createServer(self, ip, port):
         from player2 import createHost
-        self.connectionInputButton["state"] = "disabled"
+        self.serverInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
         if(self.socket != False):
             self.startGame()
@@ -234,14 +251,14 @@ class serverGUI():
         if(self.board.isWinner()):
             self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
-                self.waitingText.set(f"You won! {self.p1Name.get()} is choosing if they want to play again...")
+                self.waitingText.set(f"You won!\n{self.p1Name.get()} is choosing if they want to play again...")
             else:
-                self.waitingText.set(f"You lost! {self.p1Name.get()} is choosing if they want to play again...")
+                self.waitingText.set(f"You lost!\n{self.p1Name.get()} is choosing if they want to play again...")
             self.showWaitingForClientScreen()
             awaitP1Choice(self.socket, self)
         elif(self.board.boardIsFull()):
             self.hideMainGame()
-            self.waitingText.set(f"Tie game! {self.p1Name.get()} is choosing if they want to play again...")
+            self.waitingText.set(f"Tie game!\n{self.p1Name.get()} is choosing if they want to play again...")
             self.showWaitingForClientScreen()
             awaitP1Choice(self.socket, self)
         else:

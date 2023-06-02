@@ -7,18 +7,24 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         serverSocket.bind((ip, port))
-        gui.waitingText.set(f"Waiting for connection on {gui.connectionIP.get()}:{gui.connectionPort.get()}...")
+        gui.master.resizable(1,1)
+        gui.master.geometry("280x100")
+        gui.master.resizable(0,0)
+        gui.waitingText.set(f"Waiting for connection on:\n{gui.connectionIP.get()}:{gui.connectionPort.get()}")
         gui.hideConnectionScreen()
-        gui.invalidServerLabel.grid_forget()
+        gui.hideErrorServerScreen()
         gui.showWaitingForClientScreen()
         serverSocket.listen(1)
         clientSocket, clientAddress = serverSocket.accept()
-        gui.waitingText.set("Player 1 connected! Waiting for them to input username...")
+        gui.master.resizable(1,1)
+        gui.master.geometry("370x100")
+        gui.master.resizable(0,0)
+        gui.waitingText.set("Client connected!\nWaiting for them to input username...")
         requestNames(gui, clientSocket)
         return clientSocket
     except:
         gui.reloadConnectionScreen()
-        gui.invalidServerLabel.grid(row=2,column=1)
+        gui.showErrorServerScreen()
         return False
 
 def requestNames(gui, clientSocket) -> tuple[str, str]:
