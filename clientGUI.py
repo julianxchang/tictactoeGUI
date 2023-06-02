@@ -1,5 +1,6 @@
 import tkinter as tk
 from threading import Thread
+from player1 import *
 from gameboard import BoardClass
 
 class clientServer():
@@ -76,10 +77,9 @@ class clientServer():
         self.messagetxtLabel["fg"] = "black"
 
     def createEndScreen(self):
-        from player1 import playAgain, endGame
-        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText)
-        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:[playAgain(self.socket, self), self.hideEndScreen()])
-        self.stopButton = tk.Button(self.master, text="No", command=lambda:[endGame(self.socket, self), self.hideEndScreen()])
+        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText, font=("Arial", 13))
+        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:[playAgain(self.socket, self), self.hideEndScreen()], height=2)
+        self.stopButton = tk.Button(self.master, text="No", command=lambda:[endGame(self.socket, self), self.hideEndScreen()], height=2)
 
     def createStatScreen(self):
         self.statsTitleLabel = tk.Label(self.master, text = "Final Stats")
@@ -137,9 +137,12 @@ class clientServer():
         self.messagetxtLabel.grid(row=4,column=1)
 
     def showEndScreen(self):
-        self.endLabel.grid(row=0, column=0)
-        self.continueButton.grid(row=0, column=1)
-        self.stopButton.grid(row=0, column=2)
+        self.master.resizable(1,1)
+        self.master.geometry("213x117")
+        self.master.resizable(0,0)
+        self.endLabel.grid(row=0, columnspan=2, padx=20, pady=(20, 5))
+        self.continueButton.grid(row=1, column=0, padx=(20,5), sticky="news")
+        self.stopButton.grid(row=1, column=1, padx=(5,20), sticky="news")
 
     def showStatScreen(self):
         p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
@@ -198,12 +201,10 @@ class clientServer():
         self.stopButton.grid_forget()
 
     def attemptConnection(self, ip, port):
-        from player1 import connect_to_host
         self.connectionInputButton["state"] = "disabled"
         self.socket = connect_to_host(self, ip, port)
 
     def confirmUsername(self, p1Name):
-        from player1 import requestNames
         try:
             requestNames(self.socket, p1Name)
             self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
@@ -219,7 +220,6 @@ class clientServer():
             self.invalidNameLabel.grid(row=3)
 
     def btnClick(self, btn):
-        from player1 import move
         self.disableAllButtons()
         btn["text"] = "X"
         if(btn == self.btn1): row, col = 0, 0
@@ -239,7 +239,6 @@ class clientServer():
         self.checkEndGame(True)
 
     def getServerMove(self):
-        from player1 import awaitServerMove
         row, col = awaitServerMove(self.socket, self.board)
         if(row==0 and col == 0): self.btn1["text"] = "O"
         elif(row==0 and col == 1): self.btn2["text"] = "O"
