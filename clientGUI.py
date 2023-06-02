@@ -11,6 +11,7 @@ class clientServer():
         self.canvasSetup()
         self.initTKVariables()
         self.createConnectionScreen()
+        self.createErrorClientScreen()
         self.createRequestNameScreen()
         self.createEndScreen()
         self.createStatScreen()
@@ -37,7 +38,7 @@ class clientServer():
         self.master = tk.Tk()
         self.master.title("Client")
         self.master.geometry("526x570")
-        self.master.resizable(0,0)
+        self.master.resizable(1,1)
 
     def createConnectionScreen(self):
         self.connectionIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font = ("Arial, 10"))
@@ -46,14 +47,16 @@ class clientServer():
         self.connectionPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font=("Arial, 10"), width=17)
         self.colonLabel = tk.Label(self.master, text=":", font=("Arial, 10"))
         self.connectionInputButton = tk.Button(self.master, text="Connect", command=Thread(target=lambda:self.attemptConnection(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
-        self.invalidConnectionLabel = tk.Label(self.master, text="Connection could not be made.\nTry again?", fg="red")
-        self.yesButton = tk.Button(self.master, text="Yes", command=lambda:self.reloadConnectionScreen())
-        self.noButton = tk.Button(self.master, text="No", command = self.master.destroy)
+
+    def createErrorClientScreen(self):
+        self.invalidConnectionLabel = tk.Label(self.master, text="Connection could not be made. Try again?", fg="red", font=("Arial", 13))
+        self.yesButton = tk.Button(self.master, text="Yes", command=lambda:[self.showConnectionScreen(), self.hideErrorClientScreen()], height=2)
+        self.noButton = tk.Button(self.master, text="No", command = self.master.destroy, height=2)
 
     def createRequestNameScreen(self):
-        self.requestNameLabel = tk.Label(self.master, text="Please enter your username (only alphanumeric):")
+        self.requestNameLabel = tk.Label(self.master, text="Please enter your username (only alphanumeric):", font=("Arial, 10"))
         self.requestNameInput = tk.Entry(self.master, textvariable=self.p1Name)
-        self.usernameButton = tk.Button(self.master, text="Begin Game", command=Thread(target=lambda:self.confirmUsername(self.p1Name.get())).start)
+        self.usernameButton = tk.Button(self.master, text="Begin Game", command=Thread(target=lambda:self.confirmUsername(self.p1Name.get())).start, height=2)
         self.invalidNameLabel = tk.Label(self.master, text="Please only enter alphanumeric usernames.", fg="red")
 
     def createMainGame(self):
@@ -89,24 +92,36 @@ class clientServer():
         self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
 
     def showConnectionScreen(self):
-        self.connectionIPLabel.grid(row=0,column=0, sticky="W")
-        self.connectionIPEntry.grid(row=1,column=0)
-        self.connectionPortLabel.grid(row=0,column=2, sticky="W")
+        self.connectionInputButton["state"] = "normal"
+        self.master.geometry("358x131")
+        self.master.resizable(0,0)
+        self.connectionIPLabel.grid(row=0,column=0, sticky="W", padx=(20,0), pady=(20,0))
+        self.connectionIPEntry.grid(row=1,column=0, padx=(20,0))
+        self.connectionPortLabel.grid(row=0,column=2, sticky="W", pady=(20,0))
         self.connectionPortEntry.grid(row=1,column=2)
         self.colonLabel.grid(row=1,column=1)
-        self.connectionInputButton.grid(row=2, sticky="news", columnspan=3, pady=5)
+        self.connectionInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
 
     def showErrorClientScreen(self):
-        self.invalidConnectionLabel.grid(row=0,column=3, rowspan=2, columnspan=2, padx=17)
-        self.yesButton.grid(row=2,column=3, padx=(10,5), pady=5, sticky="news")
-        self.noButton.grid(row=2,column=4, padx=(5,10), pady=5, sticky="news")
+        self.master.resizable(1,1)
+        self.master.geometry("360x120")
+        self.master.resizable(0,0)
+        self.invalidConnectionLabel.grid(columnspan=2, padx=20, pady=(20, 5))
+        self.yesButton.grid(row=1, column=0, padx=(20,5), sticky="news")
+        self.noButton.grid(row=1, column=1, padx=(5,20), sticky="news")
 
     def showRequestNameScreen(self):
-        self.requestNameLabel.grid(row=0,column=0)
-        self.requestNameInput.grid(row=0,column=1,padx=60)
-        self.usernameButton.grid(row=1,column=0)
+        self.master.resizable(1,1)
+        self.master.geometry("331x129")
+        self.master.resizable(0,0)
+        self.requestNameLabel.grid(row=0,column=0, padx=20,pady=(20,0))
+        self.requestNameInput.grid(row=1, sticky="news", padx=20, pady=(0,5))
+        self.usernameButton.grid(row=2, sticky="news", padx=20)
 
     def showMainGame(self):
+        self.master.resizable(1,1)
+        self.master.geometry("526x570")
+        self.master.resizable(0,0)
         self.playerLabel.grid(row=0, column=0)
         self.currentTurnLabel.grid(row=0, column=1)
         self.opponentLabel.grid(row=0, column=2)
@@ -151,6 +166,11 @@ class clientServer():
         self.connectionInputButton.grid_forget()
         self.colonLabel.grid_forget()
 
+    def hideErrorClientScreen(self):
+        self.invalidConnectionLabel.grid_forget()
+        self.yesButton.grid_forget()
+        self.noButton.grid_forget()
+
     def hideRequestNameScreen(self):
         self.requestNameLabel.grid_forget()
         self.requestNameInput.grid_forget()
@@ -182,14 +202,6 @@ class clientServer():
         self.connectionInputButton["state"] = "disabled"
         self.socket = connect_to_host(self, ip, port)
 
-    def reloadConnectionScreen(self):
-        self.invalidConnectionLabel.grid_forget()
-        self.yesButton.grid_forget()
-        self.noButton.grid_forget()
-        self.hideConnectionScreen()
-        self.createConnectionScreen()
-        self.showConnectionScreen()
-
     def confirmUsername(self, p1Name):
         from player1 import requestNames
         try:
@@ -204,7 +216,7 @@ class clientServer():
             self.hideRequestNameScreen()
             self.createRequestNameScreen()
             self.showRequestNameScreen()
-            self.invalidNameLabel.grid(row=1,column=1)
+            self.invalidNameLabel.grid(row=3)
 
     def btnClick(self, btn):
         from player1 import move
