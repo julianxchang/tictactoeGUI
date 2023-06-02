@@ -1,6 +1,7 @@
 import tkinter as tk
 from threading import Thread
 from gameboard import BoardClass
+from player2 import *
 
 class serverGUI():
     def __init__(self):
@@ -165,7 +166,6 @@ class serverGUI():
         self.messagetxtLabel.grid_forget()
 
     def createServer(self, ip, port):
-        from player2 import createHost
         self.serverInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
         if(self.socket != False):
@@ -182,7 +182,6 @@ class serverGUI():
         self.getClientMove()
 
     def getClientMove(self):
-        from player2 import awaitClientMove
         row, col = awaitClientMove(self.socket, self.board)
         if(row==0 and col == 0): self.btn1["text"] = "X"
         elif(row==0 and col == 1): self.btn2["text"] = "X"
@@ -201,7 +200,6 @@ class serverGUI():
         self.checkEndGame(False)
 
     def btnClick(self, btn):
-        from player2 import move
         self.disableAllButtons()
         btn["text"] = "O"
         if(btn == self.btn1): row, col = 0, 0
@@ -244,7 +242,6 @@ class serverGUI():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
-        from player2 import awaitP1Choice
         if(self.board.isWinner()):
             self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
