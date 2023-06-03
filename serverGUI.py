@@ -9,6 +9,7 @@ class serverGUI():
         self.board = object
         self.p1Name = "player1"
         self.p2Name = "player2"
+        self.font = ("Small Fonts", 13)
         self.canvasSetup()
         self.initTKVariables()
         self.createConnectionScreen()
@@ -41,13 +42,13 @@ class serverGUI():
         self.master.resizable(1,1)
 
     def createConnectionScreen(self):
-        self.serverIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font = ("Arial, 10"))
-        self.serverIPEntry = tk.Entry(self.master, textvariable=self.connectionIP, width = 30)
-        self.serverPortLabel = tk.Label(self.master, text = "Port", font = ("Arial, 10"))
-        self.serverPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font = ("Arial, 10"), width=17)
-        self.colonLabel = tk.Label(self.master, text=":", font=("Arial, 10"))
+        self.serverIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font=self.font)
+        self.serverIPEntry = tk.Entry(self.master, textvariable=self.connectionIP, font=self.font, width = 25)
+        self.serverPortLabel = tk.Label(self.master, text = "Port", font=self.font)
+        self.serverPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font=self.font, width=15)
+        self.colonLabel = tk.Label(self.master, text=":", font=self.font)
         self.serverInputButton = tk.Button(self.master, text="Create Server", command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
-        self.invalidServerLabel = tk.Label(self.master, text="Invalid server ip/port. Please try again", fg="red")
+        self.invalidServerLabel = tk.Label(self.master, text="Invalid server ip/port. Please try again", font=self.font, fg="red")
 
     def createWaitingForClientScreen(self):
         self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText, font=("Arial", 15))
@@ -77,10 +78,9 @@ class serverGUI():
         self.winLabel = tk.Label(self.master, textvariable = self.winStat)
         self.lossLabel = tk.Label(self.master, textvariable = self.lossStat)
         self.tieLabel = tk.Label(self.master, textvariable = self.tieStat)
-        self.quitButton = tk.Button(self.master, text="Quit", command=self.master.destroy)
 
     def showConnectionScreen(self):
-        self.master.geometry("358x131")
+        self.master.geometry("459x152")
         self.master.resizable(0,0)
         self.serverIPLabel.grid(row=0,column=0, sticky="W", padx=(20,0), pady=(20,0))
         self.serverIPEntry.grid(row=1,column=0, padx=(20,0))
@@ -134,7 +134,6 @@ class serverGUI():
         self.winLabel.grid()
         self.lossLabel.grid()
         self.tieLabel.grid()
-        self.quitButton.grid()
 
     def hideConnectionScreen(self):
         self.serverIPLabel.grid_forget()
