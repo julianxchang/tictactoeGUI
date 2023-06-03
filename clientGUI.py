@@ -65,15 +65,15 @@ class clientServer():
         self.playerLabel = tk.Label(self.master, text=f"Your Name: {self.p1Name.get()}", font=self.font)
         self.currentTurnLabel = tk.Label(self.master, textvariable=self.currentTurn, font=("Small Fonts", 15))
         self.opponentLabel = tk.Label(self.master, text=f"Opponent Name: {self.p2Name}", font=self.font)
-        self.btn1 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn1)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn2 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn2)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn3 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn3)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn4 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn4)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn5 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn5)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn6 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn6)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn7 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn7)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn8 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn8)).start, font=("Small Fonts", 40), height=2, width=5)
-        self.btn9 = tk.Button(self.master, text=" ", command = Thread(target=lambda:self.btnClick(self.btn9)).start, font=("Small Fonts", 40), height=2, width=5)
+        self.btn1 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn1)).start, height=2, width=5)
+        self.btn2 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn2)).start, height=2, width=5)
+        self.btn3 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn3)).start, height=2, width=5)
+        self.btn4 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn4)).start, height=2, width=5)
+        self.btn5 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn5)).start, height=2, width=5)
+        self.btn6 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn6)).start, height=2, width=5)
+        self.btn7 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn7)).start, height=2, width=5)
+        self.btn8 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn8)).start, height=2, width=5)
+        self.btn9 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn9)).start, height=2, width=5)
 
     def createEndScreen(self):
         self.endLabel = tk.Label(self.master, textvariable=self.endLabelText, font=self.font)
@@ -143,7 +143,7 @@ class clientServer():
 
     def showStatScreen(self):
         self.master.resizable(1,1)
-        self.master.geometry("410x235")
+        self.master.geometry("410x245")
         self.master.resizable(0,0)
         p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
         self.p1NameStat.set(f'Player 1 Name (You): {p1Name}')
