@@ -91,6 +91,7 @@ class serverGUI():
         self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
 
     def showErrorServerScreen(self):
+        
         self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()

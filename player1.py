@@ -9,9 +9,7 @@ def connect_to_host(gui, ip, port):
         gui.showRequestNameScreen()
         return connectionSocket
     except:
-        gui.hideConnectionScreen()
-        gui.createConnectionScreen()
-        gui.showErrorClientScreen()
+        gui.showErrorClientMessageBox()
 
 def requestNames(connectionSocket, p1Name) -> tuple[str, str]:
     if(not p1Name.isalnum()):
@@ -35,6 +33,7 @@ def playAgain(connectionSocket, gui):
 
 def endGame(connectionSocket, gui):
     connectionSocket.send(b"Fun Times")
+    gui.hideMainGame()
     gui.showStatScreen()
 
 if __name__ == "__main__":

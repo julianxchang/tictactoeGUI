@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import font
+from tkinter import messagebox
 from threading import Thread
 from player1 import *
 from gameboard import BoardClass
@@ -14,9 +14,7 @@ class clientServer():
         self.canvasSetup()
         self.initTKVariables()
         self.createConnectionScreen()
-        self.createErrorClientScreen()
         self.createRequestNameScreen()
-        self.createEndScreen()
         self.createStatScreen()
         self.showConnectionScreen()
         self.runUI()
@@ -50,11 +48,6 @@ class clientServer():
         self.colonLabel = tk.Label(self.master, text=":", font=self.font)
         self.connectionInputButton = tk.Button(self.master, text="Connect", font=self.font, command=Thread(target=lambda:self.attemptConnection(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
 
-    def createErrorClientScreen(self):
-        self.invalidConnectionLabel = tk.Label(self.master, text="Connection could not be made. Try again?", fg="red", font=self.font)
-        self.yesButton = tk.Button(self.master, text="Yes", command=lambda:[self.showConnectionScreen(), self.hideErrorClientScreen()], font=self.font)
-        self.noButton = tk.Button(self.master, text="No", command = self.master.destroy, font=self.font)
-
     def createRequestNameScreen(self):
         self.requestNameLabel = tk.Label(self.master, text="Please enter your username (only alphanumeric):", font=self.font)
         self.requestNameInput = tk.Entry(self.master, textvariable=self.p1Name, font=self.font)
@@ -74,11 +67,6 @@ class clientServer():
         self.btn7 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn7)).start, height=2, width=5)
         self.btn8 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn8)).start, height=2, width=5)
         self.btn9 = tk.Button(self.master, text=" ", font=("Small Fonts", 40), command = Thread(target=lambda:self.btnClick(self.btn9)).start, height=2, width=5)
-
-    def createEndScreen(self):
-        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText, font=self.font)
-        self.continueButton = tk.Button(self.master, text="Yes", command=lambda:[playAgain(self.socket, self), self.hideEndScreen()], font=self.font)
-        self.stopButton = tk.Button(self.master, text="No", command=lambda:[endGame(self.socket, self), self.hideEndScreen()], font=self.font)
 
     def createStatScreen(self):
         self.statsTitleLabel = tk.Label(self.master, text="Final Stats", font=self.font, fg="red")
@@ -100,13 +88,14 @@ class clientServer():
         self.colonLabel.grid(row=1,column=1)
         self.connectionInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
 
-    def showErrorClientScreen(self):
-        self.master.resizable(1,1)
-        self.master.geometry("350x110")
-        self.master.resizable(0,0)
-        self.invalidConnectionLabel.grid(columnspan=2, padx=20, pady=(20, 5))
-        self.yesButton.grid(row=1, column=0, padx=(20,5), sticky="news")
-        self.noButton.grid(row=1, column=1, padx=(5,20), sticky="news")
+    def showErrorClientMessageBox(self):
+        cont = tk.messagebox.askquestion("Connection Error", "Connection could not be made. Try again?")
+        if(cont=="yes"):
+            self.hideConnectionScreen()
+            self.createConnectionScreen()
+            self.showConnectionScreen()
+        else:
+            self.master.quit()
 
     def showRequestNameScreen(self):
         self.master.resizable(1,1)
@@ -132,14 +121,6 @@ class clientServer():
         self.btn8.grid(row=3, column=1, padx=5, pady=5)
         self.btn9.grid(row=3, column=2, padx=5, pady=5)
         self.currentTurnLabel.grid(row=4, columnspan=3)
-
-    def showEndScreen(self):
-        self.master.resizable(1,1)
-        self.master.geometry("205x111")
-        self.master.resizable(0,0)
-        self.endLabel.grid(row=0, columnspan=2, padx=20, pady=(20, 5))
-        self.continueButton.grid(row=1, column=0, padx=(20,5), sticky="news")
-        self.stopButton.grid(row=1, column=1, padx=(5,20), sticky="news")
 
     def showStatScreen(self):
         self.master.resizable(1,1)
@@ -193,11 +174,6 @@ class clientServer():
         self.btn8.grid_forget()
         self.btn9.grid_forget()
 
-    def hideEndScreen(self):
-        self.endLabel.grid_forget()
-        self.continueButton.grid_forget()
-        self.stopButton.grid_forget()
-
     def attemptConnection(self, ip, port):
         self.connectionInputButton["state"] = "disabled"
         self.socket = connect_to_host(self, ip, port)
@@ -211,10 +187,11 @@ class clientServer():
             self.createMainGame()
             self.showMainGame()
         except:
+            tk.messagebox.showinfo("Invalid Username", "Username can only be alphanumeric. Please try again.")
             self.hideRequestNameScreen()
             self.createRequestNameScreen()
             self.showRequestNameScreen()
-            self.invalidNameLabel.grid(row=3)
+
 
     def btnClick(self, btn):
         self.disableAllButtons()
@@ -275,16 +252,21 @@ class clientServer():
 
     def checkEndGame(self, getNextMove):
         if(self.board.isWinner()):
-            self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
-                self.endLabelText.set("You won! Play again?")
+                title = "Winner!"
+                text = "You won!"
             else:
-                self.endLabelText.set("You lost! Play again?")
-            self.showEndScreen()
+                title = "Loser."
+                text = "You lost!"
         elif(self.board.boardIsFull()):
-            self.hideMainGame()
-            self.endLabelText.set("Tie game! Play again?")
-            self.showEndScreen()
+            title = "Tie!"
+            text = "Tie game!"
+        if self.board.isWinner() or self.board.boardIsFull():
+            cont = tk.messagebox.askquestion(title, f"{text} Play again?")
+            if cont=="yes":
+                playAgain(self.socket, self)
+            else:
+                endGame(self.socket, self)
         else:
             if(getNextMove == True):
                 self.getServerMove()
@@ -294,6 +276,7 @@ class clientServer():
         self.board.updateGamesPlayed()
         self.currentTurnLabel['fg'] = "black"
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
+        self.hideMainGame()
         self.createMainGame()
         self.showMainGame()
 
