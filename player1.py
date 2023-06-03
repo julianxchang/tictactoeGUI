@@ -14,7 +14,7 @@ def connect_to_host(gui, ip, port):
         gui.showErrorClientScreen()
 
 def requestNames(connectionSocket, p1Name) -> tuple[str, str]:
-    if(not p1Name.isalnum() or len(p1Name>10)):
+    if(not p1Name.isalnum()):
         raise ValueError
     else:
         connectionSocket.send(p1Name.encode())
