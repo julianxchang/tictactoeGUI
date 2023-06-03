@@ -245,14 +245,17 @@ class clientServer():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
+        end = False
         if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
                 text = 'You won!'
             else:
                 text = 'You lost!'
+            end = True
         elif(self.board.boardIsFull()):
             text = 'Tie game!'
-        if self.board.isWinner() or self.board.boardIsFull():
+            end = True
+        if end == True:
             cont = tk.messagebox.askquestion('Client', f"{text} Play again?")
             if cont == 'yes':
                 playAgain(self.socket, self)
