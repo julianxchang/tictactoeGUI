@@ -187,10 +187,17 @@ class serverGUI():
         self.currentTurnLabel["fg"] = "red"
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.showMainGame()
-        self.getClientMove()
+        self.getClientMove('none')
 
-    def getClientMove(self):
-        row, col = awaitClientMove(self.socket, self.board)
+    def getClientMove(self, move):
+        if(move == 'none'):
+            row, col = awaitClientMove(self.socket, self.board)
+        else:
+            self.hideMainGame()
+            self.createMainGame()
+            self.showMainGame()
+            row, col = int(move[0]), int(move[1])
+            self.board.updateGameBoard(row, col)
         if(row==0 and col == 0): self.btn1["text"] = "X"
         elif(row==0 and col == 1): self.btn2["text"] = "X"
         elif(row==0 and col == 2): self.btn3["text"] = "X"
@@ -262,17 +269,20 @@ class serverGUI():
             awaitP1Choice(self.socket, self)
         else:
             if(getNextMove == True):
-                self.getClientMove()
+                self.getClientMove('none')
 
-    def restartGame(self):
+    def restartGame(self, move):
         self.board.resetGameBoard()
         self.board.updateGamesPlayed()
         self.currentTurnLabel["fg"] = "red"
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
-        self.hideMainGame()
-        self.createMainGame()
-        self.showMainGame()
-        self.getClientMove()
+        if(move == 'none'):
+            self.hideMainGame()
+            self.createMainGame()
+            self.showMainGame()
+            self.getClientMove('none')
+        else:
+            self.getClientMove(move)
 
     def runUI(self):
         self.master.mainloop()
