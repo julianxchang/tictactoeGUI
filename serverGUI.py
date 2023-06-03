@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from threading import Thread
 from gameboard import BoardClass
 from player2 import *
@@ -22,8 +23,8 @@ class serverGUI():
     def initTKVariables(self):
         self.connectionIP = tk.StringVar()
         self.connectionIP.set("localhost")
-        self.connectionPort = tk.IntVar()
-        self.connectionPort.set(8000)
+        self.connectionPort = tk.StringVar()
+        self.connectionPort.set("8000")
         self.p1Name = tk.StringVar()
         self.waitingText = tk.StringVar()
         self.currentTurn = tk.StringVar()
@@ -90,15 +91,11 @@ class serverGUI():
         self.colonLabel.grid(row=1,column=1)
         self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
 
-    def showErrorServerScreen(self):
-        
+    def showErrorServerMessageBox(self):
+        tk.messagebox.showinfo("Server Error", "Server could not be created. Please try again.")
         self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()
-        self.master.resizable(1,1)
-        self.master.geometry("459x170")
-        self.master.resizable(0,0)
-        self.invalidServerLabel.grid(row=3,columnspan=3)
 
     def showSuccessfulServerScreen(self):
         self.master.resizable(1,1)

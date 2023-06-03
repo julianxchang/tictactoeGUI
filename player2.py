@@ -6,7 +6,7 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
     #Create server socket object
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        serverSocket.bind((ip, port))
+        serverSocket.bind((ip, int(port)))
         gui.showSuccessfulServerScreen()
         serverSocket.listen(1)
         clientSocket, clientAddress = serverSocket.accept()
@@ -14,7 +14,7 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
         requestNames(gui, clientSocket)
         return clientSocket
     except:
-        gui.showErrorServerScreen()
+        gui.showErrorServerMessageBox()
         return False
 
 def requestNames(gui, clientSocket) -> tuple[str, str]:
