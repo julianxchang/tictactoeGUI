@@ -4,7 +4,7 @@ from gameboard import BoardClass
 def connect_to_host(gui, ip, port):
     connectionSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        connectionSocket.connect((ip,port))
+        connectionSocket.connect((ip, int(port)))
         gui.hideConnectionScreen()
         gui.showRequestNameScreen()
         return connectionSocket
@@ -14,7 +14,7 @@ def connect_to_host(gui, ip, port):
         gui.showErrorClientScreen()
 
 def requestNames(connectionSocket, p1Name) -> tuple[str, str]:
-    if(not p1Name.isalnum()):
+    if(not p1Name.isalnum() or len(p1Name>10)):
         raise ValueError
     else:
         connectionSocket.send(p1Name.encode())
