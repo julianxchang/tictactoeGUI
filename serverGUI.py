@@ -15,7 +15,6 @@ class serverGUI():
         self.initTKVariables()
         self.createConnectionScreen()
         self.createWaitingForClientScreen()
-        self.createEndScreen()
         self.createStatScreen()
         self.showConnectionScreen()
         self.runUI()
@@ -28,7 +27,6 @@ class serverGUI():
         self.p1Name = tk.StringVar()
         self.waitingText = tk.StringVar()
         self.currentTurn = tk.StringVar()
-        self.endLabelText = tk.StringVar()
         self.p1NameStat = tk.StringVar()
         self.p2NameStat = tk.StringVar()
         self.gamesPlayedStat = tk.StringVar()
@@ -69,9 +67,6 @@ class serverGUI():
         self.btn9 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn9)).start, height=2,width=5)
         self.disableAllButtons()
 
-    def createEndScreen(self):
-        self.endLabel = tk.Label(self.master, textvariable=self.endLabelText, font=self.font, width=50)
-
     def createStatScreen(self):
         self.statsTitleLabel = tk.Label(self.master, text="Final Stats", font=self.font, fg="red")
         self.p1NameLabel = tk.Label(self.master, textvariable=self.p1NameStat, font=self.font, width=40)
@@ -92,7 +87,7 @@ class serverGUI():
         self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
 
     def showErrorServerMessageBox(self):
-        tk.messagebox.showinfo("Server Error", "Server could not be created. Please try again.")
+        tk.messagebox.showerror("Error", "Server could not be created. Please try again.")
         self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()
@@ -131,12 +126,6 @@ class serverGUI():
         self.btn8.grid(row=3,column=1, padx=5, pady=5)
         self.btn9.grid(row=3,column=2, padx=5, pady=5)
         self.currentTurnLabel.grid(row=4, columnspan=3)
-
-    def showEndScreen(self):
-        self.master.resizable(1,1)
-        self.master.geometry("505x100")
-        self.master.resizable(0,0)
-        self.endLabel.grid(pady=20, sticky="news")
 
     def showStatScreen(self):
         self.master.resizable(1,1)
@@ -184,9 +173,6 @@ class serverGUI():
         self.btn7.grid_forget()
         self.btn8.grid_forget()
         self.btn9.grid_forget()
-
-    def hideEndScreen(self):
-        self.endLabel.grid_forget()
 
     def createServer(self, ip, port):
         self.serverInputButton["state"] = "disabled"
@@ -262,17 +248,17 @@ class serverGUI():
 
     def checkEndGame(self, getNextMove):
         if(self.board.isWinner()):
-            self.hideMainGame()
             if(self.board.getThisName() == self.board.getLastMove()):
-                self.endLabelText.set(f"You won!\n{self.p1Name.get()} is choosing if they want to play again...")
+                title = "Winner!"
+                text= f"You won!\n{self.p1Name.get()} is choosing if they want to play again..."
             else:
-                self.endLabelText.set(f"You lost!\n{self.p1Name.get()} is choosing if they want to play again...")
-            self.showEndScreen()
-            awaitP1Choice(self.socket, self)
+                title = "Loser."
+                text = f"You lost!\n{self.p1Name.get()} is choosing if they want to play again..."
         elif(self.board.boardIsFull()):
-            self.hideMainGame()
-            self.endLabelText.set(f"Tie game!\n{self.p1Name.get()} is choosing if they want to play again...")
-            self.showEndScreen()
+            text= f"Tie game!\n{self.p1Name.get()} is choosing if they want to play again..."
+        if self.board.isWinner() or self.board.boardIsFull():
+            self.disableAllButtons()
+            tk.messagebox.showinfo(title, text)
             awaitP1Choice(self.socket, self)
         else:
             if(getNextMove == True):
@@ -283,6 +269,7 @@ class serverGUI():
         self.board.updateGamesPlayed()
         self.currentTurnLabel["fg"] = "red"
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
+        self.hideMainGame()
         self.createMainGame()
         self.showMainGame()
         self.getClientMove()

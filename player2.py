@@ -33,10 +33,10 @@ def move(clientSocket, board, row, col) -> tuple[int, int]:
 
 def awaitP1Choice(clientSocket, gui) -> bool:
     p1Choice = clientSocket.recv(1024).decode('ascii')
-    gui.hideEndScreen()
     if(p1Choice == "Play Again"):
         gui.restartGame()
     else:
+        gui.hideMainGame()
         gui.showStatScreen()
 
 
