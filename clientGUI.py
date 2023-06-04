@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from threading import Thread
+from player1 import *
 from gameboard import BoardClass
 
 class clientGUI():
@@ -184,12 +185,10 @@ class clientGUI():
         self.btn9.grid_forget()
 
     def attemptConnection(self, ip, port):
-        from player1 import connect_to_host
         self.connectionInputButton['state'] = 'disabled'
         self.socket = connect_to_host(self, ip, port)
 
     def confirmUsername(self, p1Name):
-        from player1 import requestNames
         try:
             p2Name = requestNames(self.socket, self, p1Name)
             self.p2Name.set(p2Name)
@@ -209,7 +208,6 @@ class clientGUI():
         self.showMainGame()
 
     def btnClick(self, btn):
-        from player1 import move
         self.disableAllButtons()
         btn["text"] = "X"
         if(btn == self.btn1): row, col = 0, 0
@@ -228,7 +226,6 @@ class clientGUI():
         self.checkEndGame(True)
 
     def getServerMove(self):
-        from player1 import awaitServerMove
         row, col = awaitServerMove(self.socket, self.board)
         if(row==0 and col == 0): self.btn1['text'] = 'O'
         elif(row==0 and col == 1): self.btn2['text'] = 'O'
@@ -268,7 +265,6 @@ class clientGUI():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
-        from player1 import playAgain, endGame
         end = False
         if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
@@ -280,7 +276,7 @@ class clientGUI():
             text = 'Tie game!'
             end = True
         if end == True:
-            cont = tk.messagebox.askquestion('Client', f"{text} Play again?")
+            cont = tk.messagebox.askquestion('Client', f"{text} Play again?", icon='info')
             if cont == 'yes':
                 playAgain(self.socket, self)
             else:

@@ -1,7 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
 from threading import Thread
+from player2 import *
 from gameboard import BoardClass
+
+class invalidUsername(Exception):
+    pass
+
+class dupUsername(Exception):
+    pass
 
 class serverGUI():
     def __init__(self):
@@ -196,20 +203,24 @@ class serverGUI():
         self.btn9.grid_forget()
 
     def createServer(self, ip, port):
-        from player2 import createHost
         self.serverInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
 
     def confirmUsername(self, p2Name):
-        from player2 import sendP2Name
         try:
             sendP2Name(self, self.socket, self.p1Name.get(), p2Name)
-            self.startGame()
-        except:
-            tk.messagebox.showerror("Invalid Username", "Username can only be alphanumeric. Please try again.")
+        except invalidUsername:
+            tk.messagebox.showerror("Error", "Username can only be alphanumeric. Please try again.")
             self.hideRequestNameScreen()
             self.createRequestNameScreen()
             self.showRequestNameScreen()
+        except dupUsername:
+            tk.messagebox.showerror("Error", "Please choose a different username than player 1.")
+            self.hideRequestNameScreen()
+            self.createRequestNameScreen()
+            self.showRequestNameScreen()
+        else:
+            self.startGame()
 
     def startGame(self):
         self.hideWaitingForClientScreen()
@@ -222,7 +233,6 @@ class serverGUI():
         self.getClientMove('none')
 
     def getClientMove(self, move):
-        from player2 import awaitClientMove
         if(move == 'none'):
             row, col = awaitClientMove(self.socket, self.board)
         else:
@@ -247,7 +257,6 @@ class serverGUI():
         self.checkEndGame(False)
 
     def btnClick(self, btn):
-        from player2 import move
         self.disableAllButtons()
         btn["text"] = "O"
         if(btn == self.btn1): row, col = 0, 0
@@ -288,20 +297,19 @@ class serverGUI():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
-        from player2 import awaitP1Choice
         end = False
         if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
-                text= f"You won!\n{self.p1Name.get()} is choosing if they want to play again..."
+                text= f"You won!"
             else:
-                text = f"You lost!\n{self.p1Name.get()} is choosing if they want to play again..."
+                text = f"You lost!"
             end = True
         elif(self.board.boardIsFull()):
-            text= f"Tie game!\n{self.p1Name.get()} is choosing if they want to play again..."
+            text= f"Tie game!"
             end = True
         if end == True:
             self.disableAllButtons()
-            tk.messagebox.showinfo("Server", text)
+            tk.messagebox.showinfo("Server", f"{text}\n{self.p1Name.get()} is choosing if they want to play again...", icon='info')
             awaitP1Choice(self.socket, self)
         else:
             if(getNextMove == True):
