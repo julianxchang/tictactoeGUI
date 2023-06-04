@@ -11,15 +11,23 @@ def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.so
         serverSocket.listen(1)
         clientSocket, clientAddress = serverSocket.accept()
         gui.showClientConnectedScreen()
-        requestNames(gui, clientSocket)
+        requestP1Name(gui, clientSocket)
         return clientSocket
     except:
         gui.showErrorServerMessageBox()
         return False
 
-def requestNames(gui, clientSocket) -> tuple[str, str]:
+def requestP1Name(gui, clientSocket) -> tuple[str, str]:
     p1Name = clientSocket.recv(1024).decode('ascii')
     gui.p1Name.set(p1Name)
+    gui.hideWaitingForClientScreen()
+    gui.showRequestNameScreen()
+
+def sendP2Name(gui, clientSocket, p2Name):
+    if(not p2Name.isalnum()):
+        raise ValueError
+    else:
+        clientSocket.send(p2Name.encode())
 
 def awaitClientMove(clientSocket, board):
     p1Move = clientSocket.recv(1024).decode('ascii')

@@ -243,7 +243,7 @@ class BoardClass:
             None.
         """
         self.setBoard([[" "," "," "],[" "," "," "],[" "," "," "]])
-        self.setLastMove("player2")
+        self.setLastMove(self.p2Name)
 
     def updateGameBoard(self, row, col) -> None:
         """Updates the board with the corresponding row/col.
@@ -259,7 +259,7 @@ class BoardClass:
         Returns:
             None.
         """
-        if self.getLastMove() == "player2":
+        if self.getLastMove() == self.getP2Name():
             self.board[row][col] = "X"
         else:
             self.board[row][col] = "O"
@@ -306,10 +306,9 @@ class BoardClass:
         if win == True:
             if self.getThisName() == self.getLastMove():
                 self.setNumWins(self.getNumWins() + 1)
-                return True
             else:
                 self.setNumLosses(self.getNumLosses() + 1)
-                return True
+            return True
         return False
 
 

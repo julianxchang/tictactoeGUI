@@ -11,11 +11,14 @@ def connect_to_host(gui, ip, port):
     except:
         gui.showErrorClientMessageBox()
 
-def requestNames(connectionSocket, p1Name) -> tuple[str, str]:
+def requestNames(connectionSocket, gui, p1Name) -> tuple[str, str]:
     if(not p1Name.isalnum()):
         raise ValueError
     else:
         connectionSocket.send(p1Name.encode())
+        gui.showWaitingForServerScreen()
+        p2Name = connectionSocket.recv(1024).decode('ascii')
+        return p2Name
 
 def move(connectionSocket, board, row, col) -> tuple[int, int]:
         connectionSocket.send((str(row) + str(col)).encode())

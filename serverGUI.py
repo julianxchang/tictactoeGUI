@@ -15,6 +15,7 @@ class serverGUI():
         self.initTKVariables()
         self.createConnectionScreen()
         self.createWaitingForClientScreen()
+        self.createRequestNameScreen()
         self.createStatScreen()
         self.showConnectionScreen()
         self.runUI()
@@ -25,6 +26,7 @@ class serverGUI():
         self.connectionPort = tk.StringVar()
         self.connectionPort.set("8000")
         self.p1Name = tk.StringVar()
+        self.p2Name = tk.StringVar()
         self.waitingText = tk.StringVar()
         self.currentTurn = tk.StringVar()
         self.p1NameStat = tk.StringVar()
@@ -52,8 +54,14 @@ class serverGUI():
     def createWaitingForClientScreen(self):
         self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText, font=self.font)
 
+    def createRequestNameScreen(self):
+        self.requestNameLabel = tk.Label(self.master, text='Please enter your username (only alphanumeric):', font=self.font)
+        self.requestNameInput = tk.Entry(self.master, textvariable=self.p2Name, font=self.font)
+        self.usernameButton = tk.Button(self.master, text='Begin Game', command=Thread(target=lambda:self.confirmUsername(self.p2Name.get())).start, font=self.font, height=2)
+        self.invalidNameLabel = tk.Label(self.master, text='Username can only be alphanumeric. Please try again.', fg='red', font=self.font)
+
     def createMainGame(self):
-        self.playerLabel = tk.Label(self.master, text=f"Player Name: {self.p2Name}", font=self.font)
+        self.playerLabel = tk.Label(self.master, text=f"Player Name: {self.p2Name.get()}", font=self.font)
         self.currentTurnLabel = tk.Label(self.master, textvariable=self.currentTurn, font=("Small Fonts", 15), fg="red")
         self.opponentLabel = tk.Label(self.master, text=f"Opponent Name: {self.p1Name.get()}", font=self.font)
         self.btn1 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn1)).start, height=2,width=5)
@@ -110,6 +118,14 @@ class serverGUI():
         self.master.resizable(0,0)
         self.waitingText.set("Client connected!\nWaiting for them to input username...")
 
+    def showRequestNameScreen(self):
+        self.master.resizable(1,1)
+        self.master.geometry('387x158')
+        self.master.resizable(0,0)
+        self.requestNameLabel.grid(row=0, column=0, padx=20, pady=(20,0))
+        self.requestNameInput.grid(row=1, padx=20, pady=(0,5), sticky='news')
+        self.usernameButton.grid(row=2, padx=20, sticky='news')
+
     def showMainGame(self):
         self.master.resizable(1,1)
         self.master.geometry("522x590")
@@ -160,6 +176,12 @@ class serverGUI():
     def hideWaitingForClientScreen(self):
         self.waitingForClientLabel.grid_forget()
 
+    def hideRequestNameScreen(self):
+        self.requestNameLabel.grid_forget()
+        self.requestNameInput.grid_forget()
+        self.usernameButton.grid_forget()
+        self.invalidNameLabel.grid_forget()
+
     def hideMainGame(self):
         self.playerLabel.grid_forget()
         self.currentTurnLabel.grid_forget()
@@ -177,15 +199,24 @@ class serverGUI():
     def createServer(self, ip, port):
         self.serverInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
-        if(self.socket != False):
+
+    def confirmUsername(self, p2Name):
+        try:
+            sendP2Name(self, self.socket, p2Name)
             self.startGame()
+        except:
+            tk.messagebox.showerror("Invalid Username", "Username can only be alphanumeric. Please try again.")
+            self.hideRequestNameScreen()
+            self.createRequestNameScreen()
+            self.showRequestNameScreen()
 
     def startGame(self):
         self.hideWaitingForClientScreen()
         self.createMainGame()
-        self.board = BoardClass(self.p2Name, self.p1Name.get(), self.p2Name, self.p2Name, 0, 0, 0, 1)
+        self.board = BoardClass(self.p2Name.get(), self.p1Name.get(), self.p2Name.get(), self.p2Name.get(), 0, 0, 0, 1)
         self.currentTurnLabel["fg"] = "red"
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
+        self.hideRequestNameScreen()
         self.showMainGame()
         self.getClientMove('none')
 
@@ -209,7 +240,7 @@ class serverGUI():
         elif(row==2 and col == 2): self.btn9["text"] = "X"
         self.board.setLastMove(self.p1Name.get())
         self.currentTurnLabel["fg"] = "black"
-        self.currentTurn.set(f'Current Turn: {self.p2Name}')
+        self.currentTurn.set(f'Current Turn: {self.p2Name.get()}')
         self.enableButtons()
         self.checkEndGame(False)
 
@@ -226,7 +257,7 @@ class serverGUI():
         elif(btn == self.btn8): row, col = 2, 1
         elif(btn == self.btn9): row, col = 2, 2
         move(self.socket, self.board, row, col)
-        self.board.setLastMove(self.p2Name)
+        self.board.setLastMove(self.p2Name.get())
         self.currentTurnLabel["fg"] = "red"
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.checkEndGame(True)
@@ -257,10 +288,8 @@ class serverGUI():
         end = False
         if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
-                title = "Winner!"
                 text= f"You won!\n{self.p1Name.get()} is choosing if they want to play again..."
             else:
-                title = "Loser."
                 text = f"You lost!\n{self.p1Name.get()} is choosing if they want to play again..."
             end = True
         elif(self.board.boardIsFull()):
@@ -268,7 +297,7 @@ class serverGUI():
             end = True
         if end == True:
             self.disableAllButtons()
-            tk.messagebox.showinfo(title, text)
+            tk.messagebox.showinfo("Server", text)
             awaitP1Choice(self.socket, self)
         else:
             if(getNextMove == True):
