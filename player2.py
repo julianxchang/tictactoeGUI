@@ -1,5 +1,6 @@
 import socket
 from gameboard import BoardClass
+import serverGUI
 
 #This function asks user for host information and creates the server
 def createHost(gui, ip, port) -> tuple[socket.socket, tuple[str, str], socket.socket]:
@@ -23,8 +24,8 @@ def requestP1Name(gui, clientSocket) -> tuple[str, str]:
     gui.hideWaitingForClientScreen()
     gui.showRequestNameScreen()
 
-def sendP2Name(gui, clientSocket, p2Name):
-    if(not p2Name.isalnum()):
+def sendP2Name(gui, clientSocket, p1Name, p2Name):
+    if(not p2Name.isalnum() or p2Name==p1Name):
         raise ValueError
     else:
         clientSocket.send(p2Name.encode())
@@ -49,6 +50,8 @@ def awaitP1Choice(clientSocket, gui) -> bool:
         gui.hideMainGame()
         gui.showStatScreen()
 
+def runGame():
+    serverGUI.serverGUI()
 
 if __name__ == "__main__":
-    pass
+    runGame()

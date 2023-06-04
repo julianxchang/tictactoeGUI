@@ -345,3 +345,19 @@ class BoardClass:
             None.
         """
         return self.p1Name, self.p2Name, self.games_played, self.num_wins, self.num_losses, self.num_ties
+
+    def printBoard(self):
+        """Prints the current board.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        i = 0
+        for row in self.board:
+            print(" | ".join(row))
+            if(i<2):
+                print("---------")
+            i += 1

@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 from threading import Thread
 from gameboard import BoardClass
-from player2 import *
 
 class serverGUI():
     def __init__(self):
@@ -197,12 +196,14 @@ class serverGUI():
         self.btn9.grid_forget()
 
     def createServer(self, ip, port):
+        from player2 import createHost
         self.serverInputButton["state"] = "disabled"
         self.socket = createHost(self, ip, port)
 
     def confirmUsername(self, p2Name):
+        from player2 import sendP2Name
         try:
-            sendP2Name(self, self.socket, p2Name)
+            sendP2Name(self, self.socket, self.p1Name.get(), p2Name)
             self.startGame()
         except:
             tk.messagebox.showerror("Invalid Username", "Username can only be alphanumeric. Please try again.")
@@ -221,6 +222,7 @@ class serverGUI():
         self.getClientMove('none')
 
     def getClientMove(self, move):
+        from player2 import awaitClientMove
         if(move == 'none'):
             row, col = awaitClientMove(self.socket, self.board)
         else:
@@ -245,6 +247,7 @@ class serverGUI():
         self.checkEndGame(False)
 
     def btnClick(self, btn):
+        from player2 import move
         self.disableAllButtons()
         btn["text"] = "O"
         if(btn == self.btn1): row, col = 0, 0
@@ -285,6 +288,7 @@ class serverGUI():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
+        from player2 import awaitP1Choice
         end = False
         if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
@@ -319,8 +323,5 @@ class serverGUI():
     def runUI(self):
         self.master.mainloop()
 
-def runServer():
-    gui = serverGUI()
-
 if __name__ == "__main__":
-    runServer()
+    pass

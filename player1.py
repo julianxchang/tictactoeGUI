@@ -1,5 +1,6 @@
 import socket
 from gameboard import BoardClass
+import clientGUI
 
 def connect_to_host(gui, ip, port):
     connectionSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,5 +40,8 @@ def endGame(connectionSocket, gui):
     gui.hideMainGame()
     gui.showStatScreen()
 
+def runGame():
+    clientGUI.clientGUI()
+
 if __name__ == "__main__":
-    pass
+    runGame()

@@ -2,9 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 from threading import Thread
 from gameboard import BoardClass
-from player1 import *
 
-class clientServer():
+class clientGUI():
     def __init__(self):
         self.socket = object
         self.board = object
@@ -185,10 +184,12 @@ class clientServer():
         self.btn9.grid_forget()
 
     def attemptConnection(self, ip, port):
+        from player1 import connect_to_host
         self.connectionInputButton['state'] = 'disabled'
         self.socket = connect_to_host(self, ip, port)
 
     def confirmUsername(self, p1Name):
+        from player1 import requestNames
         try:
             p2Name = requestNames(self.socket, self, p1Name)
             self.p2Name.set(p2Name)
@@ -208,6 +209,7 @@ class clientServer():
         self.showMainGame()
 
     def btnClick(self, btn):
+        from player1 import move
         self.disableAllButtons()
         btn["text"] = "X"
         if(btn == self.btn1): row, col = 0, 0
@@ -226,6 +228,7 @@ class clientServer():
         self.checkEndGame(True)
 
     def getServerMove(self):
+        from player1 import awaitServerMove
         row, col = awaitServerMove(self.socket, self.board)
         if(row==0 and col == 0): self.btn1['text'] = 'O'
         elif(row==0 and col == 1): self.btn2['text'] = 'O'
@@ -265,6 +268,7 @@ class clientServer():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
+        from player1 import playAgain, endGame
         end = False
         if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
@@ -297,8 +301,5 @@ class clientServer():
     def runUI(self):
         self.master.mainloop()
 
-def runClient():
-    gui = clientServer()
-
 if __name__ == '__main__':
-    runClient()
+    pass
