@@ -14,9 +14,9 @@ class serverGUI():
     def __init__(self):
         self.socket = object
         self.board = object
-        self.p1Name = "player1"
-        self.p2Name = "player2"
-        self.font = ("Small Fonts", 13)
+        self.p1Name = 'player1'
+        self.p2Name = 'player2'
+        self.font = ('Small Fonts', 13)
         self.canvasSetup()
         self.initTKVariables()
         self.createConnectionScreen()
@@ -28,9 +28,9 @@ class serverGUI():
 
     def initTKVariables(self):
         self.connectionIP = tk.StringVar()
-        self.connectionIP.set("localhost")
+        self.connectionIP.set('localhost')
         self.connectionPort = tk.StringVar()
-        self.connectionPort.set("8000")
+        self.connectionPort.set('8000')
         self.p1Name = tk.StringVar()
         self.p2Name = tk.StringVar()
         self.waitingText = tk.StringVar()
@@ -44,18 +44,18 @@ class serverGUI():
 
     def canvasSetup(self):
         self.master = tk.Tk()
-        self.master.title("Server")
-        self.master.geometry("526x570")
+        self.master.title('Server')
+        self.master.geometry('526x570')
         self.master.resizable(1,1)
 
     def createConnectionScreen(self):
-        self.serverIPLabel = tk.Label(self.master, text="Host Name (or IP address)", font=self.font)
+        self.serverIPLabel = tk.Label(self.master, text='Host Name (or IP address)', font=self.font)
         self.serverIPEntry = tk.Entry(self.master, textvariable=self.connectionIP, font=self.font, width = 25)
-        self.serverPortLabel = tk.Label(self.master, text = "Port", font=self.font)
+        self.serverPortLabel = tk.Label(self.master, text = 'Port', font=self.font)
         self.serverPortEntry = tk.Entry(self.master, textvariable=self.connectionPort, font=self.font, width=15)
-        self.colonLabel = tk.Label(self.master, text=":", font=self.font)
-        self.serverInputButton = tk.Button(self.master, text="Create Server", font=self.font, command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
-        self.invalidServerLabel = tk.Label(self.master, text="Invalid server ip/port. Please try again", font=self.font, fg="red")
+        self.colonLabel = tk.Label(self.master, text=':', font=self.font)
+        self.serverInputButton = tk.Button(self.master, text='Create Server', font=self.font, command=Thread(target=lambda:self.createServer(self.connectionIP.get(), self.connectionPort.get())).start, height=2)
+        self.invalidServerLabel = tk.Label(self.master, text='Invalid server ip/port. Please try again', font=self.font, fg='red')
 
     def createWaitingForClientScreen(self):
         self.waitingForClientLabel = tk.Label(self.master, textvariable=self.waitingText, font=self.font)
@@ -68,21 +68,21 @@ class serverGUI():
 
     def createMainGame(self):
         self.playerLabel = tk.Label(self.master, text=f"Player Name: {self.p2Name.get()}", font=self.font)
-        self.currentTurnLabel = tk.Label(self.master, textvariable=self.currentTurn, font=("Small Fonts", 15), fg="red")
+        self.currentTurnLabel = tk.Label(self.master, textvariable=self.currentTurn, font=('Small Fonts', 15), fg='red')
         self.opponentLabel = tk.Label(self.master, text=f"Opponent Name: {self.p1Name.get()}", font=self.font)
-        self.btn1 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn1)).start, height=2,width=5)
-        self.btn2 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn2)).start, height=2,width=5)
-        self.btn3 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn3)).start, height=2,width=5)
-        self.btn4 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn4)).start, height=2,width=5)
-        self.btn5 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn5)).start, height=2,width=5)
-        self.btn6 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn6)).start, height=2,width=5)
-        self.btn7 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn7)).start, height=2,width=5)
-        self.btn8 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn8)).start, height=2,width=5)
-        self.btn9 = tk.Button(self.master, text=" ", font=("Small FOnts", 40), command = Thread(target=lambda:self.btnClick(self.btn9)).start, height=2,width=5)
+        self.btn1 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn1)).start, height=2,width=5)
+        self.btn2 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn2)).start, height=2,width=5)
+        self.btn3 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn3)).start, height=2,width=5)
+        self.btn4 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn4)).start, height=2,width=5)
+        self.btn5 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn5)).start, height=2,width=5)
+        self.btn6 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn6)).start, height=2,width=5)
+        self.btn7 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn7)).start, height=2,width=5)
+        self.btn8 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn8)).start, height=2,width=5)
+        self.btn9 = tk.Button(self.master, text=' ', font=('Small FOnts', 40), command = Thread(target=lambda:self.btnClick(self.btn9)).start, height=2,width=5)
         self.disableAllButtons()
 
     def createStatScreen(self):
-        self.statsTitleLabel = tk.Label(self.master, text="Final Stats", font=self.font, fg="red")
+        self.statsTitleLabel = tk.Label(self.master, text='Final Stats', font=self.font, fg='red')
         self.p1NameLabel = tk.Label(self.master, textvariable=self.p1NameStat, font=self.font, width=40)
         self.p2NameLabel = tk.Label(self.master, textvariable=self.p2NameStat, font=self.font)
         self.gamesPlayedLabel = tk.Label(self.master, textvariable=self.gamesPlayedStat, font=self.font)
@@ -91,24 +91,24 @@ class serverGUI():
         self.tieLabel = tk.Label(self.master, textvariable=self.tieStat, font=self.font)
 
     def showConnectionScreen(self):
-        self.master.geometry("459x152")
+        self.master.geometry('459x152')
         self.master.resizable(0,0)
-        self.serverIPLabel.grid(row=0,column=0, sticky="W", padx=(20,0), pady=(20,0))
-        self.serverIPEntry.grid(row=1,column=0, padx=(20,0))
-        self.serverPortLabel.grid(row=0,column=2, sticky="W", pady=(20,0))
-        self.serverPortEntry.grid(row=1,column=2)
-        self.colonLabel.grid(row=1,column=1)
-        self.serverInputButton.grid(row=2, sticky="news", columnspan=3, pady=5, padx=(20,0))
+        self.serverIPLabel.grid(row=0, column=0, sticky='W', padx=(20,0), pady=(20,0))
+        self.serverIPEntry.grid(row=1, column=0, padx=(20,0))
+        self.serverPortLabel.grid(row=0, column=2, sticky='W', pady=(20,0))
+        self.serverPortEntry.grid(row=1, column=2)
+        self.colonLabel.grid(row=1, column=1)
+        self.serverInputButton.grid(row=2, sticky='news', columnspan=3, pady=5, padx=(20,0))
 
     def showErrorServerMessageBox(self):
-        tk.messagebox.showerror("Error", "Server could not be created. Please try again.")
+        tk.messagebox.showerror('Error', 'Server could not be created. Please try again.')
         self.hideConnectionScreen()
         self.createConnectionScreen()
         self.showConnectionScreen()
 
     def showSuccessfulServerScreen(self):
         self.master.resizable(1,1)
-        self.master.geometry("240x90")
+        self.master.geometry('240x90')
         self.master.resizable(0,0)
         self.waitingText.set(f"Waiting for connection on:\n{self.connectionIP.get()}:{self.connectionPort.get()}")
         self.hideConnectionScreen()
@@ -120,9 +120,9 @@ class serverGUI():
 
     def showClientConnectedScreen(self):
         self.master.resizable(1,1)
-        self.master.geometry("315x90")
+        self.master.geometry('315x90')
         self.master.resizable(0,0)
-        self.waitingText.set("Client connected!\nWaiting for them to input username...")
+        self.waitingText.set('Client connected!\nWaiting for them to input username...')
 
     def showRequestNameScreen(self):
         self.master.resizable(1,1)
@@ -134,10 +134,10 @@ class serverGUI():
 
     def showMainGame(self):
         self.master.resizable(1,1)
-        self.master.geometry("522x590")
+        self.master.geometry('522x590')
         self.master.resizable(0,0)
-        self.playerLabel.grid(row=0, column=0, columnspan=2, padx=(10,0), sticky="W")
-        self.opponentLabel.grid(row=0, column=1, columnspan=2, sticky="E")
+        self.playerLabel.grid(row=0, column=0, columnspan=2, padx=(10,0), sticky='W')
+        self.opponentLabel.grid(row=0, column=1, columnspan=2, sticky='E')
         self.btn1.grid(row=1,column=0, padx=(10,5), pady=5)
         self.btn2.grid(row=1,column=1, padx=5, pady=5)
         self.btn3.grid(row=1,column=2, padx=5, pady=5)
@@ -151,7 +151,7 @@ class serverGUI():
 
     def showStatScreen(self):
         self.master.resizable(1,1)
-        self.master.geometry("410x245")
+        self.master.geometry('410x245')
         self.master.resizable(0,0)
         p1Name, p2Name, gamesPlayed, wins, losses, ties = self.board.computeStats()
         self.p1NameStat.set(f'Player 1 Name: {p1Name}')
@@ -203,19 +203,19 @@ class serverGUI():
         self.btn9.grid_forget()
 
     def createServer(self, ip, port):
-        self.serverInputButton["state"] = "disabled"
+        self.serverInputButton['state'] = 'disabled'
         self.socket = createHost(self, ip, port)
 
     def confirmUsername(self, p2Name):
         try:
             sendP2Name(self, self.socket, self.p1Name.get(), p2Name)
         except invalidUsername:
-            tk.messagebox.showerror("Error", "Username can only be alphanumeric. Please try again.")
+            tk.messagebox.showerror('Error', 'Username can only be alphanumeric. Please try again.')
             self.hideRequestNameScreen()
             self.createRequestNameScreen()
             self.showRequestNameScreen()
         except dupUsername:
-            tk.messagebox.showerror("Error", "Please choose a different username than player 1.")
+            tk.messagebox.showerror('Error', 'Please choose a different username than player 1.')
             self.hideRequestNameScreen()
             self.createRequestNameScreen()
             self.showRequestNameScreen()
@@ -226,7 +226,7 @@ class serverGUI():
         self.hideWaitingForClientScreen()
         self.createMainGame()
         self.board = BoardClass(self.p2Name.get(), self.p1Name.get(), self.p2Name.get(), self.p2Name.get(), 0, 0, 0, 1)
-        self.currentTurnLabel["fg"] = "red"
+        self.currentTurnLabel['fg'] = 'red'
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.hideRequestNameScreen()
         self.showMainGame()
@@ -241,24 +241,24 @@ class serverGUI():
             self.showMainGame()
             row, col = int(move[0]), int(move[1])
             self.board.updateGameBoard(row, col)
-        if(row==0 and col == 0): self.btn1["text"] = "X"
-        elif(row==0 and col == 1): self.btn2["text"] = "X"
-        elif(row==0 and col == 2): self.btn3["text"] = "X"
-        elif(row==1 and col == 0): self.btn4["text"] = "X"
-        elif(row==1 and col == 1): self.btn5["text"] = "X"
-        elif(row==1 and col == 2): self.btn6["text"] = "X"
-        elif(row==2 and col == 0): self.btn7["text"] = "X"
-        elif(row==2 and col == 1): self.btn8["text"] = "X"
-        elif(row==2 and col == 2): self.btn9["text"] = "X"
+        if(row==0 and col == 0): self.btn1['text'] = 'X'
+        elif(row==0 and col == 1): self.btn2['text'] = 'X'
+        elif(row==0 and col == 2): self.btn3['text'] = 'X'
+        elif(row==1 and col == 0): self.btn4['text'] = 'X'
+        elif(row==1 and col == 1): self.btn5['text'] = 'X'
+        elif(row==1 and col == 2): self.btn6['text'] = 'X'
+        elif(row==2 and col == 0): self.btn7['text'] = 'X'
+        elif(row==2 and col == 1): self.btn8['text'] = 'X'
+        elif(row==2 and col == 2): self.btn9['text'] = 'X'
         self.board.setLastMove(self.p1Name.get())
-        self.currentTurnLabel["fg"] = "black"
+        self.currentTurnLabel['fg'] = 'black'
         self.currentTurn.set(f'Current Turn: {self.p2Name.get()}')
         self.enableButtons()
         self.checkEndGame(False)
 
     def btnClick(self, btn):
         self.disableAllButtons()
-        btn["text"] = "O"
+        btn['text'] = 'O'
         if(btn == self.btn1): row, col = 0, 0
         elif(btn == self.btn2): row, col = 0, 1
         elif(btn == self.btn3): row, col = 0, 2
@@ -270,7 +270,7 @@ class serverGUI():
         elif(btn == self.btn9): row, col = 2, 2
         move(self.socket, self.board, row, col)
         self.board.setLastMove(self.p2Name.get())
-        self.currentTurnLabel["fg"] = "red"
+        self.currentTurnLabel['fg'] = 'red'
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         self.checkEndGame(True)
 
@@ -297,19 +297,17 @@ class serverGUI():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
-        end = False
-        if(self.board.isWinner()):
+        endGame = self.board.isWinner()
+        if(endGame):
             if(self.board.getThisName() == self.board.getLastMove()):
                 text= f"You won!"
             else:
                 text = f"You lost!"
-            end = True
         elif(self.board.boardIsFull()):
             text= f"Tie game!"
-            end = True
-        if end == True:
+        if endGame:
             self.disableAllButtons()
-            tk.messagebox.showinfo("Server", f"{text}\n{self.p1Name.get()} is choosing if they want to play again...", icon='info')
+            tk.messagebox.showinfo('Server', f"{text}\n{self.p1Name.get()} is choosing if they want to play again...", icon='info')
             awaitP1Choice(self.socket, self)
         else:
             if(getNextMove == True):
@@ -318,7 +316,7 @@ class serverGUI():
     def restartGame(self, move):
         self.board.resetGameBoard()
         self.board.updateGamesPlayed()
-        self.currentTurnLabel["fg"] = "red"
+        self.currentTurnLabel['fg'] = 'red'
         self.currentTurn.set(f'Current Turn: {self.p1Name.get()}')
         if(move == 'none'):
             self.hideMainGame()
@@ -331,5 +329,5 @@ class serverGUI():
     def runUI(self):
         self.master.mainloop()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass
