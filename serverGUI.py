@@ -297,16 +297,17 @@ class serverGUI():
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
     def checkEndGame(self, getNextMove):
-        winningMove = self.board.isWinner()
-        if(winningMove):
+        end = False
+        if(self.board.isWinner()):
             if(self.board.getThisName() == self.board.getLastMove()):
                 text= f"You won!"
             else:
                 text = f"You lost!"
-        tieMove = self.board.boardIsFull()
-        if(tieMove):
+            end = True
+        elif(self.board.boardIsFull()):
             text= f"Tie game!"
-        if winningMove or tieMove:
+            end = True
+        if end:
             self.disableAllButtons()
             tk.messagebox.showinfo('Server', f"{text}\n{self.p1Name.get()} is choosing if they want to play again...", icon='info')
             awaitP1Choice(self.socket, self)
