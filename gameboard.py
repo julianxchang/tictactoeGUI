@@ -15,12 +15,14 @@ class BoardClass:
         """Creates a BoardClass with all the information of the board.
 
         Args:
-            name: The name of the player.
+            thisName: The username of the current board.
+            p1Name: client username.
+            p2Name: server username.
             last_move: The name of player who last moved.
             num_wins: The total number of wins.
             num_ties: The total number of ties.
             num_losses: The total number of losses.
-            total_games: The total number of games played.
+            games_played: The total number of games played.
             board: The current board.
 
         Returns:
@@ -37,13 +39,21 @@ class BoardClass:
         self.setBoard(board)
 
     def setThisName(self, thisName: str) -> None:
+        """Sets the username of teh current board.
+
+        Args:
+            thisName: Username of the player (for this board).
+
+        Returns:
+            None.
+        """
         self.thisName = thisName
 
     def setP1Name(self, name: str) -> None:
-        """Sets the name of the player.
+        """Sets the name of the client.
 
         Args:
-            name: Name of the player.
+            name: client username.
 
         Returns:
             None.
@@ -51,10 +61,10 @@ class BoardClass:
         self.p1Name = name
 
     def setP2Name(self, name: str) -> None:
-        """Sets the name of the player.
+        """Sets the name of the server.
 
         Args:
-            name: Name of the player.
+            name: server username.
 
         Returns:
             None.
@@ -62,7 +72,7 @@ class BoardClass:
         self.p2Name = name
 
     def setLastMove(self, last_move: str) -> None:
-        """Sets the name of the player who last moved.
+        """Sets the attribute last_move to the name of the player who last moved.
 
         Args:
             last_move: The name of player who last moved.
@@ -128,13 +138,13 @@ class BoardClass:
         self.board = board
 
     def getThisName(self) -> str:
-            """Gets the name of the player.
+            """Gets username for the current board.
 
             Args:
                 None.
 
             Returns:
-                A copy of the attribute name.
+                A copy of the attribute thisName.
 
             """
             return self.thisName
@@ -146,7 +156,7 @@ class BoardClass:
             None.
 
         Returns:
-            A copy of the attribute name.
+            A copy of the attribute p1Name.
 
         """
         return self.p1Name
@@ -158,7 +168,7 @@ class BoardClass:
             None.
 
         Returns:
-            A copy of the attribute name.
+            A copy of the attribute p2Name.
 
         """
         return self.p2Name
@@ -248,7 +258,7 @@ class BoardClass:
     def updateGameBoard(self, row, col) -> None:
         """Updates the board with the corresponding row/col.
 
-        If the attribute last_move equals "player2", the corresponding
+        If the attribute last_move equals the attribute p2Name, the corresponding
         row and column of the board will equal "X". Otherwise, it would
         be "O".
 
@@ -342,22 +352,11 @@ class BoardClass:
             None.
 
         Returns:
-            None.
+            p1Name: player 1 name.
+            p2Name: player 2 name.
+            games_played: total games played.
+            num_wins: total wins.
+            num_losses: total losses.
+            num_ties: total ties.
         """
         return self.p1Name, self.p2Name, self.games_played, self.num_wins, self.num_losses, self.num_ties
-
-    def printBoard(self):
-        """Prints the current board.
-
-        Args:
-            None.
-
-        Returns:
-            None.
-        """
-        i = 0
-        for row in self.board:
-            print(" | ".join(row))
-            if(i<2):
-                print("---------")
-            i += 1
