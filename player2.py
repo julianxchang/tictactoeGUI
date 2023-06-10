@@ -58,6 +58,10 @@ def sendP2Name(clientSocket, p1Name, p2Name) -> None:
 
     Returns:
         None.
+
+    Raises:
+        invalidUsername: raises invalidUsername if username entered is not alphanumeric.
+        dupUsername: raises dupUsername if username entered is same as client.
     """
     from serverGUI import invalidUsername, dupUsername
     if(not p2Name.isalnum()):

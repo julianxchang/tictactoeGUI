@@ -38,6 +38,9 @@ def requestNames(connectionSocket, gui, p1Name) -> str:
 
     Returns:
         p2Name: server's username
+
+    Raises:
+        ValueError: Raises valueerror if username entered is not alphanumeric.
     """
     if(not p1Name.isalnum()):
         raise ValueError
