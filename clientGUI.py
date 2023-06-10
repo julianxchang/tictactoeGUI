@@ -338,7 +338,7 @@ class clientGUI():
         self.btn8.destroy()
         self.btn9.destroy()
 
-    def attemptConnection(self, ip, port):
+    def attemptConnection(self, ip, port) -> None:
         """The method is called when button for connecting to server is clicked.
         The method will disable the button and call connect_to_host().
 
@@ -351,7 +351,7 @@ class clientGUI():
         self.connectionInputButton['state'] = 'disabled'
         self.socket = connect_to_host(self, ip, port)
 
-    def confirmUsername(self, p1Name):
+    def confirmUsername(self, p1Name) -> None:
         """This method is called when button for "Begin Game" is clicked.
         The method will use a try statement to call requestNames() from player1
         module and if it returns successfully, will set the class attribute p2Name
@@ -393,7 +393,7 @@ class clientGUI():
         self.createMainGame()
         self.showMainGame()
 
-    def btnClick(self, btn):
+    def btnClick(self, btn) -> None:
         """This method is called when any button in main game screen is clicked.
         The method will disable all buttons and check which button was clicked. Then,
         it will call the move() function from player1 module. Finally, it will update
@@ -488,7 +488,7 @@ class clientGUI():
         if(self.btn8['text'] == ' '): self.btn8['state'] = 'normal'
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
-    def checkEndGame(self, getNextMove):
+    def checkEndGame(self, getNextMove) -> None:
         """This method called .isWinner() and .boardIsFull() from the BoardClass class
         to see if the game should end.
 

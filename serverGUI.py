@@ -369,7 +369,7 @@ class serverGUI():
         self.btn8.destroy()
         self.btn9.destroy()
 
-    def createServer(self, ip, port):
+    def createServer(self, ip, port) -> None:
         """The method is called when button for creating server is clicked.
         The method will disable the button and call createHost().
 
@@ -430,7 +430,7 @@ class serverGUI():
         self.showMainGame()
         self.getClientMove('none')
 
-    def getClientMove(self, move):
+    def getClientMove(self, move) -> None:
         """This method is called if checkEndGame() doesn't detect a winning/tie move.
         This method will receive a move from the client and make the necessary changes
         to the current board. Finally, it will update information on current move and
@@ -465,7 +465,7 @@ class serverGUI():
         self.enableButtons()
         self.checkEndGame(False)
 
-    def btnClick(self, btn):
+    def btnClick(self, btn) -> None:
         """This method is called when any button in main game screen is clicked.
         The method will disable all buttons and check which button was clicked. Then,
         it will call the move() function from player2 module. Finally, it will update
@@ -532,7 +532,7 @@ class serverGUI():
         if(self.btn8['text'] == ' '): self.btn8['state'] = 'normal'
         if(self.btn9['text'] == ' '): self.btn9['state'] = 'normal'
 
-    def checkEndGame(self, getNextMove):
+    def checkEndGame(self, getNextMove) -> None:
         """This method called .isWinner() and .boardIsFull() from the BoardClass class
         to see if the game should end.
 
@@ -563,7 +563,7 @@ class serverGUI():
             if(getNextMove == True):
                 self.getClientMove('none')
 
-    def restartGame(self, move):
+    def restartGame(self, move) -> None:
         """This method restarts the game. The method resets the game board stored in
         BoardClass and updates the numbers of games played. The method also updates the
         information on the current move. Finally, the main game screen will be regenerated.
